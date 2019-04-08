@@ -1,0 +1,21 @@
+{
+    "name": "yoan/fw-event",
+    "type": "project",
+    "require": {
+        "symfony/skeleton": "v4.2.5.1",
+        "symfony/flex": "^1.2"
+    },
+    "authors": [
+        {
+            "name": "Yoan Durand",
+            "email": "yoan@follow.fr"
+        }
+    ],
+    "minimum-stability": "stable",
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        }
+    }
+}
