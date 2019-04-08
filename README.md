@@ -14,3 +14,4 @@ Les personnes invitées peuvent confirmer leurs présences ou non a l'evennement
 
 Une fois l'évènement déroulé, les utilisateurs ont la possibilité de laisser un commentaire avec une note.
 
+Les specifications se trouvent dans le dossier doc/spec.
