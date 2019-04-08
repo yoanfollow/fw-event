@@ -1,19 +1,20 @@
 # FW Event
 
-Fw event est un projet de gestion des evenement interne organiser.
+
+Fw event est un projet de gestion des évènement interne organiser.
 
 ## Description
 
-Cette application permet a un utilisateur de creer un evenement et d'y inviter d'autres utilisateurs.
-Un evennment peut s'etendre d'une heures a plusieurs jours. 
-Le contenu d'evenement sont libre de choix. 
-Les personnes invitees peuvent confirmer leurs presences ou non a l'evennement.
-Une fois l'evenement derouler les utilisateurs ont la possibilites de laisser un commentaire avec une note.
+Cette application permet à un utilisateur de créer un évènement et d'y inviter d'autres utilisateurs.
+Un évènement peut s'etendre d'une heures a plusieurs jours.
+Le contenu d'évènement est libre de choix.
+Les personnes invitées peuvent confirmer leurs présences ou non a l'evennement.
+Une fois l'évènement déroulé, les utilisateurs ont la possibilité de laisser un commentaire avec une note.
 
-Le model metier est composer de 4 entites.
+Le modèle métier est composé de 4 entités.
 
 * Utilisateur
-* Evenemment
+* Événement
 * Invitation
 * Lieu
 * Commentaire
