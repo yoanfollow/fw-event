@@ -32,11 +32,9 @@ Toutes les entites doivents porter les informations suivantes:
 |Avatar |string ou blob |Non 
 |===
 
-____
 
-Il n'y qu'un seul role requis pour le moment ROLE_USER
+.Il n'y qu'un seul role requis pour le moment ROLE_USER
 
-____
 
 === Evenemment
 
@@ -86,6 +84,7 @@ ____
 |Note |int |Non 
 |Evenement |Evenement |Oui 
 |===
+
 
 
 == Travail attendu
