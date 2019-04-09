@@ -1,0 +1,24 @@
+app:
+    resource: '@AppBundle/Controller/'
+    type: annotation
+
+api:
+    resource: "@AppBundle/Controller/API/"
+    type:     annotation
+    defaults: {_format: json}
+    prefix:   /api
+
+app.swagger_ui:
+    path: /api/doc
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+
+
+user_registration:
+    path:     /register
+    defaults: { _controller: AppBundle:Registration:register }
+
+
+admin:
+    path:     /admin
+    defaults: { _controller: AppBundle:Admin:admin }
