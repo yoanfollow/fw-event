@@ -130,7 +130,7 @@ Un utilisateur doit pouvoir laisser un commentaire concernant un évènement.
 
 Il serait très intéressant :
 
-* De disposer d'une documentation auto générer sur un format OpenApi
+* De disposer d'une documentation auto générée sur un format OpenApi
 * Que les points d'api soit testable via un framework de test
 * D'avoir des temps de réponses assez bas mêmes si la base de données est très chargée.
 * De pouvoir faire en sorte que l'api scale en fonction du trafic.
