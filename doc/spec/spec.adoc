@@ -33,7 +33,7 @@ Toutes les entites doivents porter les informations suivantes:
 |===
 
 
-.Il n'y qu'un seul role requis pour le moment ROLE_USER
+NOTE: Il n'y qu'un seul role requis pour le moment ROLE_USER, quand l'utilisateur est connecté
 
 
 === Evenemment
@@ -87,9 +87,9 @@ Toutes les entites doivents porter les informations suivantes:
 
 
 
-== Travail attendu
+== Specifications fonctionnelles
 
-Réaliser une api authentifié selon les moyens actuels.
+Réaliser une API REST, juste la partie back end testable avec une client http, authentifié selon les moyens actuels (JWT, OAuth2, etc).
 
 Un utilisateur doit pouvoir créer un compte et s'authentifier.
 
@@ -121,16 +121,16 @@ Un utilisateur doit pouvoir laisser un commentaire concernant un évènement.
 
 === Architecture technique
 
-Language: PHP
-Framework: Symfony
-Serveur d'applicatif: Nginx ou Apache au choix.
-Base de donnees: Mysql, Mariadb, Postgres, ou solution NoSQL.
+* Language: PHP
+* Framework: Symfony
+* Serveur d'applicatif: Nginx ou Apache au choix.
+* Base de donnees: Mysql, Mariadb, Postgres, ou solution NoSQL.
 
 === Points annexes
 
-Il serait tres interessant :
+Il serait très intéressant :
 
- * De disposer d'une documentatation auto generee sur un format OpenApi
- * Que les points d'api soit testable via un framework de test
- * D'avoir des reponses assez bas memes si la base est tres chargees.
- * De pouvoir faire en sorte de que l'api scale en fonction du traffique.
+* De disposer d'une documentation auto générée sur un format OpenApi
+* Que les points d'api soit testable via un framework de test
+* D'avoir des temps de réponses assez bas mêmes si la base de données est très chargée.
+* De pouvoir faire en sorte que l'api scale en fonction du trafic.
