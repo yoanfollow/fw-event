@@ -1,0 +1,32 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+
+
+
+register:
+  path: /api/register
+  controller: App\Controller\AuthController::register
+  methods: POST
+
+
+api_login_check:
+  path: /api/login_check
+  methods:  [POST]
+
+
+#api_my_events:
+#  path: /api/events/me
+#  methods: [GET]
+#  controller: App\Controller\EventApiController::mesEvents
+#  defaults:
+#    _api_resource_class: Event::class
+#    _api_collection_operation_name: subresource
+
+#api:
+#  path: /api
+#  controller: App\Controller\AuthController::api
+
+#login_check:
+ # path:     /login_check
+ # methods:  [POST]

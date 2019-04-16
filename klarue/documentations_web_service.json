@@ -1,0 +1,2931 @@
+{
+    "swagger": "2.0",
+    "basePath": "\/",
+    "info": {
+        "title": "Fw-event",
+        "version": "0.0.0"
+    },
+    "paths": {
+        "\/api\/comments": {
+            "get": {
+                "tags": [
+                    "Comment"
+                ],
+                "operationId": "getCommentCollection",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Comment resources.",
+                "responses": {
+                    "200": {
+                        "description": "Comment collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Comment"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "description": "The collection page number",
+                        "type": "integer"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Comment"
+                ],
+                "operationId": "postCommentCollection",
+                "consumes": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Creates a Comment resource.",
+                "responses": {
+                    "201": {
+                        "description": "Comment resource created",
+                        "schema": {
+                            "$ref": "#\/definitions\/Comment"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "comment",
+                        "in": "body",
+                        "description": "The new Comment resource",
+                        "schema": {
+                            "$ref": "#\/definitions\/Comment"
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/comments\/{id}": {
+            "get": {
+                "tags": [
+                    "Comment"
+                ],
+                "operationId": "getCommentItem",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Comment resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Comment"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Comment"
+                ],
+                "operationId": "putCommentItem",
+                "consumes": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Replaces the Comment resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "comment",
+                        "in": "body",
+                        "description": "The updated Comment resource",
+                        "schema": {
+                            "$ref": "#\/definitions\/Comment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment resource updated",
+                        "schema": {
+                            "$ref": "#\/definitions\/Comment"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Comment"
+                ],
+                "operationId": "deleteCommentItem",
+                "summary": "Removes the Comment resource.",
+                "responses": {
+                    "204": {
+                        "description": "Comment resource deleted"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events": {
+            "get": {
+                "tags": [
+                    "Event"
+                ],
+                "operationId": "getEventCollection",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Event resources.",
+                "responses": {
+                    "200": {
+                        "description": "Event collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Event-event"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "description": "The collection page number",
+                        "type": "integer"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Event"
+                ],
+                "operationId": "postEventCollection",
+                "consumes": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Creates a Event resource.",
+                "responses": {
+                    "201": {
+                        "description": "Event resource created",
+                        "schema": {
+                            "$ref": "#\/definitions\/Event-event"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "body",
+                        "description": "The new Event resource",
+                        "schema": {
+                            "$ref": "#\/definitions\/Event-event"
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}": {
+            "get": {
+                "tags": [
+                    "Event"
+                ],
+                "operationId": "getEventItem",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Event resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Event resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Event-event"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Event"
+                ],
+                "operationId": "putEventItem",
+                "consumes": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Replaces the Event resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "event",
+                        "in": "body",
+                        "description": "The updated Event resource",
+                        "schema": {
+                            "$ref": "#\/definitions\/Event-event"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Event resource updated",
+                        "schema": {
+                            "$ref": "#\/definitions\/Event-event"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Event"
+                ],
+                "operationId": "deleteEventItem",
+                "summary": "Removes the Event resource.",
+                "responses": {
+                    "204": {
+                        "description": "Event resource deleted"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/location": {
+            "get": {
+                "tags": [
+                    "Location",
+                    "Event"
+                ],
+                "operationId": "api_events_location_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Location resource.",
+                "responses": {
+                    "200": {
+                        "description": "Location resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Event"
+                ],
+                "operationId": "api_events_organisator_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/events": {
+            "get": {
+                "tags": [
+                    "Event",
+                    "User"
+                ],
+                "operationId": "api_events_organisator_events_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Event resources.",
+                "responses": {
+                    "200": {
+                        "description": "Event collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Event-event"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/events\/{events}\/location": {
+            "get": {
+                "tags": [
+                    "Location",
+                    "Event"
+                ],
+                "operationId": "api_events_organisator_events_location_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Location resource.",
+                "responses": {
+                    "200": {
+                        "description": "Location resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/events\/{events}\/participants": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "Event"
+                ],
+                "operationId": "api_events_organisator_events_participants_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/events\/{events}\/participants\/{participants}\/to_user": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Invitation"
+                ],
+                "operationId": "api_events_organisator_events_participants_to_user_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/events\/{events}\/participants\/{participants}\/to_user\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "User"
+                ],
+                "operationId": "api_events_organisator_events_participants_to_user_invitations_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "User"
+                ],
+                "operationId": "api_events_organisator_invitations_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/invitations\/{invitations}\/to_user": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Invitation"
+                ],
+                "operationId": "api_events_organisator_invitations_to_user_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/invitations\/{invitations}\/to_user\/events": {
+            "get": {
+                "tags": [
+                    "Event",
+                    "User"
+                ],
+                "operationId": "api_events_organisator_invitations_to_user_events_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Event resources.",
+                "responses": {
+                    "200": {
+                        "description": "Event collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Event-event"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/invitations\/{invitations}\/to_user\/events\/{events}\/location": {
+            "get": {
+                "tags": [
+                    "Location",
+                    "Event"
+                ],
+                "operationId": "api_events_organisator_invitations_to_user_events_location_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Location resource.",
+                "responses": {
+                    "200": {
+                        "description": "Location resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/organisator\/invitations\/{invitations}\/to_user\/events\/{events}\/participants": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "Event"
+                ],
+                "operationId": "api_events_organisator_invitations_to_user_events_participants_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/participants": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "Event"
+                ],
+                "operationId": "api_events_participants_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/participants\/{participants}\/to_user": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Invitation"
+                ],
+                "operationId": "api_events_participants_to_user_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/participants\/{participants}\/to_user\/events": {
+            "get": {
+                "tags": [
+                    "Event",
+                    "User"
+                ],
+                "operationId": "api_events_participants_to_user_events_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Event resources.",
+                "responses": {
+                    "200": {
+                        "description": "Event collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Event-event"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/participants\/{participants}\/to_user\/events\/{events}\/location": {
+            "get": {
+                "tags": [
+                    "Location",
+                    "Event"
+                ],
+                "operationId": "api_events_participants_to_user_events_location_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Location resource.",
+                "responses": {
+                    "200": {
+                        "description": "Location resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/participants\/{participants}\/to_user\/events\/{events}\/organisator": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Event"
+                ],
+                "operationId": "api_events_participants_to_user_events_organisator_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/participants\/{participants}\/to_user\/events\/{events}\/organisator\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "User"
+                ],
+                "operationId": "api_events_participants_to_user_events_organisator_invitations_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/events\/{id}\/participants\/{participants}\/to_user\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "User"
+                ],
+                "operationId": "api_events_participants_to_user_invitations_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation"
+                ],
+                "operationId": "getInvitationCollection",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "description": "The collection page number",
+                        "type": "integer"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Invitation"
+                ],
+                "operationId": "postInvitationCollection",
+                "consumes": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Creates a Invitation resource.",
+                "responses": {
+                    "201": {
+                        "description": "Invitation resource created",
+                        "schema": {
+                            "$ref": "#\/definitions\/Invitation-invite"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "invitation",
+                        "in": "body",
+                        "description": "The new Invitation resource",
+                        "schema": {
+                            "$ref": "#\/definitions\/Invitation"
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/invitations\/{id}": {
+            "get": {
+                "tags": [
+                    "Invitation"
+                ],
+                "operationId": "getInvitationItem",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Invitation resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Invitation resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Invitation-invite"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Invitation"
+                ],
+                "operationId": "putInvitationItem",
+                "consumes": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Replaces the Invitation resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitation",
+                        "in": "body",
+                        "description": "The updated Invitation resource",
+                        "schema": {
+                            "$ref": "#\/definitions\/Invitation"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Invitation resource updated",
+                        "schema": {
+                            "$ref": "#\/definitions\/Invitation-invite"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Invitation"
+                ],
+                "operationId": "deleteInvitationItem",
+                "summary": "Removes the Invitation resource.",
+                "responses": {
+                    "204": {
+                        "description": "Invitation resource deleted"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/invitations\/{id}\/to_user": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Invitation"
+                ],
+                "operationId": "api_invitations_to_user_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/invitations\/{id}\/to_user\/events": {
+            "get": {
+                "tags": [
+                    "Event",
+                    "User"
+                ],
+                "operationId": "api_invitations_to_user_events_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Event resources.",
+                "responses": {
+                    "200": {
+                        "description": "Event collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Event-event"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/invitations\/{id}\/to_user\/events\/{events}\/location": {
+            "get": {
+                "tags": [
+                    "Location",
+                    "Event"
+                ],
+                "operationId": "api_invitations_to_user_events_location_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Location resource.",
+                "responses": {
+                    "200": {
+                        "description": "Location resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/invitations\/{id}\/to_user\/events\/{events}\/organisator": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Event"
+                ],
+                "operationId": "api_invitations_to_user_events_organisator_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/invitations\/{id}\/to_user\/events\/{events}\/organisator\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "User"
+                ],
+                "operationId": "api_invitations_to_user_events_organisator_invitations_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/invitations\/{id}\/to_user\/events\/{events}\/participants": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "Event"
+                ],
+                "operationId": "api_invitations_to_user_events_participants_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/invitations\/{id}\/to_user\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "User"
+                ],
+                "operationId": "api_invitations_to_user_invitations_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/locations": {
+            "get": {
+                "tags": [
+                    "Location"
+                ],
+                "operationId": "getLocationCollection",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Location resources.",
+                "responses": {
+                    "200": {
+                        "description": "Location collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Location"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "description": "The collection page number",
+                        "type": "integer"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Location"
+                ],
+                "operationId": "postLocationCollection",
+                "consumes": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Creates a Location resource.",
+                "responses": {
+                    "201": {
+                        "description": "Location resource created",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "location",
+                        "in": "body",
+                        "description": "The new Location resource",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    }
+                ]
+            }
+        },
+        "\/api\/locations\/{id}": {
+            "get": {
+                "tags": [
+                    "Location"
+                ],
+                "operationId": "getLocationItem",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Location resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Location"
+                ],
+                "operationId": "putLocationItem",
+                "consumes": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Replaces the Location resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "location",
+                        "in": "body",
+                        "description": "The updated Location resource",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location resource updated",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Location"
+                ],
+                "operationId": "deleteLocationItem",
+                "summary": "Removes the Location resource.",
+                "responses": {
+                    "204": {
+                        "description": "Location resource deleted"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "operationId": "getUserCollection",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of User resources.",
+                "responses": {
+                    "200": {
+                        "description": "User collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/User-get"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "description": "The collection page number",
+                        "type": "integer"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "operationId": "getUserItem",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            }
+        },
+        "\/api\/users\/{id}\/events": {
+            "get": {
+                "tags": [
+                    "Event",
+                    "User"
+                ],
+                "operationId": "api_users_events_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Event resources.",
+                "responses": {
+                    "200": {
+                        "description": "Event collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Event-event"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/events\/{events}\/location": {
+            "get": {
+                "tags": [
+                    "Location",
+                    "Event"
+                ],
+                "operationId": "api_users_events_location_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Location resource.",
+                "responses": {
+                    "200": {
+                        "description": "Location resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/events\/{events}\/organisator": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Event"
+                ],
+                "operationId": "api_users_events_organisator_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/events\/{events}\/organisator\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "User"
+                ],
+                "operationId": "api_users_events_organisator_invitations_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/events\/{events}\/organisator\/invitations\/{invitations}\/to_user": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Invitation"
+                ],
+                "operationId": "api_users_events_organisator_invitations_to_user_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/events\/{events}\/participants": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "Event"
+                ],
+                "operationId": "api_users_events_participants_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/events\/{events}\/participants\/{participants}\/to_user": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Invitation"
+                ],
+                "operationId": "api_users_events_participants_to_user_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/events\/{events}\/participants\/{participants}\/to_user\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "User"
+                ],
+                "operationId": "api_users_events_participants_to_user_invitations_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "participants",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "User"
+                ],
+                "operationId": "api_users_invitations_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/invitations\/{invitations}\/to_user": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Invitation"
+                ],
+                "operationId": "api_users_invitations_to_user_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/invitations\/{invitations}\/to_user\/events": {
+            "get": {
+                "tags": [
+                    "Event",
+                    "User"
+                ],
+                "operationId": "api_users_invitations_to_user_events_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Event resources.",
+                "responses": {
+                    "200": {
+                        "description": "Event collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Event-event"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/invitations\/{invitations}\/to_user\/events\/{events}\/location": {
+            "get": {
+                "tags": [
+                    "Location",
+                    "Event"
+                ],
+                "operationId": "api_users_invitations_to_user_events_location_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a Location resource.",
+                "responses": {
+                    "200": {
+                        "description": "Location resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/Location"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/invitations\/{invitations}\/to_user\/events\/{events}\/organisator": {
+            "get": {
+                "tags": [
+                    "User",
+                    "Event"
+                ],
+                "operationId": "api_users_invitations_to_user_events_organisator_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves a User resource.",
+                "responses": {
+                    "200": {
+                        "description": "User resource response",
+                        "schema": {
+                            "$ref": "#\/definitions\/User-get"
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "\/api\/users\/{id}\/invitations\/{invitations}\/to_user\/events\/{events}\/participants": {
+            "get": {
+                "tags": [
+                    "Invitation",
+                    "Event"
+                ],
+                "operationId": "api_users_invitations_to_user_events_participants_get_subresource",
+                "produces": [
+                    "application\/ld+json",
+                    "application\/json",
+                    "text\/html"
+                ],
+                "summary": "Retrieves the collection of Invitation resources.",
+                "responses": {
+                    "200": {
+                        "description": "Invitation collection response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#\/definitions\/Invitation-invite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitations",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "events",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_confirmed",
+                        "in": "query",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ]
+            }
+        }
+    },
+    "securityDefinitions": {
+        "apiKey": {
+            "type": "apiKey",
+            "in": "header",
+            "description": "Value for the Authorization header",
+            "name": "Authorization"
+        }
+    },
+    "security": [
+        {
+            "apiKey": []
+        }
+    ],
+    "definitions": {
+        "Comment": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "owner": {
+                    "type": "string"
+                },
+                "id": {
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "integer"
+                },
+                "user": {
+                    "type": "string"
+                },
+                "event": {
+                    "type": "string"
+                },
+                "createdAt": {},
+                "updatedAt": {},
+                "deletedAt": {}
+            },
+            "required": [
+                "comment",
+                "user",
+                "event"
+            ]
+        },
+        "Event": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "owner": {
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "id": {
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "organisator": {
+                    "type": "string"
+                },
+                "beginAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "endedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "location": {
+                    "$ref": "#\/definitions\/Location"
+                },
+                "participants": {
+                    "readOnly": true,
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "createdAt": {
+                    "readOnly": true
+                },
+                "updatedAt": {
+                    "readOnly": true
+                },
+                "deletedAt": {
+                    "readOnly": true
+                }
+            },
+            "required": [
+                "name",
+                "description",
+                "location"
+            ]
+        },
+        "Event-event": {
+            "type": "object",
+            "description": "",
+            "required": [
+                "name",
+                "description",
+                "location"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "organisator": {
+                    "type": "string"
+                },
+                "beginAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "endedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "location": {
+                    "$ref": "#\/definitions\/Location-event"
+                }
+            }
+        },
+        "Event-get": {
+            "type": "object",
+            "description": "",
+            "required": [
+                "name",
+                "description"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "Invitation": {
+            "type": "object",
+            "description": "",
+            "required": [
+                "to_user",
+                "event"
+            ],
+            "properties": {
+                "to_user": {
+                    "$ref": "#\/definitions\/User"
+                },
+                "owner": {
+                    "$ref": "#\/definitions\/User"
+                },
+                "id": {
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "toUser": {
+                    "$ref": "#\/definitions\/User"
+                },
+                "isConfirmed": {
+                    "type": "boolean"
+                },
+                "limitedAt": {
+                    "type": "string"
+                },
+                "event": {
+                    "type": "string"
+                },
+                "createdAt": {},
+                "updatedAt": {},
+                "deletedAt": {}
+            }
+        },
+        "Invitation-invite": {
+            "type": "object",
+            "description": "",
+            "required": [
+                "to_user"
+            ],
+            "properties": {
+                "to_user": {
+                    "$ref": "#\/definitions\/User-invite"
+                }
+            }
+        },
+        "Location": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "owner": {
+                    "type": "string"
+                },
+                "id": {
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "streetNumber": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "postalCode": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "createdAt": {},
+                "updatedAt": {},
+                "deletedAt": {}
+            },
+            "required": [
+                "name",
+                "streetNumber",
+                "city",
+                "address",
+                "postalCode",
+                "country"
+            ]
+        },
+        "Location-event": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "id": {
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "streetNumber": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "postalCode": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "streetNumber",
+                "city",
+                "address",
+                "postalCode",
+                "country"
+            ]
+        },
+        "User": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "invitations": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#\/definitions\/Event"
+                    }
+                },
+                "salt": {
+                    "readOnly": true
+                },
+                "username": {
+                    "type": "string"
+                },
+                "id": {
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "avatar": {
+                    "type": "string"
+                }
+            }
+        },
+        "User-get": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "id": {
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#\/definitions\/Event-get"
+                    }
+                },
+                "invitations": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "User-invite": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "id": {
+                    "readOnly": true,
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

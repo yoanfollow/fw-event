@@ -1,0 +1,52 @@
+<?php
+
+namespace App\DataProvider;
+
+use App\Entity\Event;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+
+final class UserItemDataProvider implements ItemDataProviderInterface
+{
+    /**
+     * @var EventRepository
+     */
+    private $repository;
+
+
+
+    /**
+     * UserMe constructor.
+     *
+     * @param EventRepository $repository
+     */
+    public function __construct(EventRepository $repository)
+    {
+        $this->repository   = $repository;
+    }
+
+    /**
+     * @param string      $resourceClass
+     * @param int|string  $id
+     * @param string|null $operationName
+     * @param array       $context
+     *
+     * @return Array|null
+     * @throws ResourceClassNotSupportedException
+     */
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    {
+        if (Event::class !== $resourceClass) {
+            throw new ResourceClassNotSupportedException();
+        }
+
+        // retrieves User from the security when hitting the route 'api_users_me' (no id needed)
+        if ('api_my_events' === $operationName) {
+            return $this->tokenStorage->getToken()->getUser();
+        }
+
+        return $this->repository->find($id); // Retrieves User normally for other actions
+    }
+}
