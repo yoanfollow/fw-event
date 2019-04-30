@@ -3,13 +3,15 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\EntityHook\AutoCreatedAtInterface;
+use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\InvitationRepository")
  */
-class Invitation
+class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {
     /**
      * @ORM\Id()

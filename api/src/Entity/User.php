@@ -3,13 +3,16 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\EntityHook\AutoCreatedAtInterface;
+use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User
+class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterface
 {
     /**
      * @ORM\Id()
@@ -29,7 +32,8 @@ class User
     private $password;
 
     /**
-     * @ORM\Column(type="text")
+     * @var array
+     * @ORM\Column(type="array")
      */
     private $roles;
 
@@ -57,6 +61,12 @@ class User
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $deletedAt;
+
+    public function __construct()
+    {
+        $this->roles = ['ROLE_USER'];
+    }
+
 
     public function getId(): ?int
     {
@@ -87,13 +97,17 @@ class User
         return $this;
     }
 
-    public function getRoles(): ?string
+    public function getRoles(): array
     {
         return $this->roles;
     }
 
-    public function setRoles(string $roles): self
+    public function setRoles(array $roles): self
     {
+        if (!in_array('ROLE_USER', $roles)) {
+            $roles[] = 'ROLE_USER';
+        }
+
         $this->roles = $roles;
 
         return $this;
@@ -157,5 +171,28 @@ class User
         $this->deletedAt = $deletedAt;
 
         return $this;
+    }
+
+    /**
+     * Returns the salt that was originally used to encode the password.
+     *
+     * This can return null if the password was not encoded using a salt.
+     *
+     * @return string|null The salt
+     */
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    /**
+     * Removes sensitive data from the user.
+     *
+     * This is important if, at any given point, sensitive information like
+     * the plain-text password is stored on this object.
+     */
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
     }
 }
