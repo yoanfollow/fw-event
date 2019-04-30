@@ -7,7 +7,7 @@ services:
     environment:
       - DATABASE_URL=mysql://noel:flantier@db:3306/follow
     volumes:
-      - ./:/var/www/project/
+      - ./api:/var/www/project/
     networks:
       - symfony
 
@@ -15,7 +15,7 @@ services:
     build:
       context: ./docker/nginx
     volumes:
-      - ./:/var/www/project/
+      - ./api:/var/www/project/
     ports:
       - 8001:80
     networks:
