@@ -34,13 +34,28 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $note;
+    private $rate;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event")
      * @ORM\JoinColumn(nullable=false)
      */
     private $event;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deletedAt;
 
     public function getId(): ?int
     {
@@ -71,14 +86,14 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
         return $this;
     }
 
-    public function getNote(): ?string
+    public function getRate(): ?int
     {
-        return $this->note;
+        return $this->rate;
     }
 
-    public function setNote(?string $note): self
+    public function setRate(?int $rate): self
     {
-        $this->note = $note;
+        $this->rate = $rate;
 
         return $this;
     }
@@ -91,6 +106,42 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
 
         return $this;
     }

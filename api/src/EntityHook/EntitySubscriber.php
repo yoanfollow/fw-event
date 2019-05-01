@@ -19,12 +19,8 @@ class EntitySubscriber implements EventSubscriber
         $entity = $args->getObject();
 
         // Add created at
-        if ($entity instanceof AutoCreatedAtInterface) {
+        if ($entity instanceof AutoCreatedAtInterface && empty($entity->getCreatedAt())) {
             $entity->setCreatedAt(DateHelper::getToday(DateHelper::UTC_PARIS_TZ));
-        }
-        // Updated at
-        if ($entity instanceof AutoUpdatedAtInterface) {
-            $entity->setUpdatedAt(DateHelper::getToday(DateHelper::UTC_PARIS_TZ));
         }
     }
 

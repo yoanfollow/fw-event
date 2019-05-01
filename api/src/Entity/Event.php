@@ -59,6 +59,21 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      */
     private $place;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $deletedAt;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -129,16 +144,20 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
         return $this;
     }
 
-    public function getPlace(): ?string
+    /**
+     * @return Place
+     */
+    public function getPlace() : ?Place
     {
         return $this->place;
     }
 
-    public function setPlace(string $place): self
+    /**
+     * @param Place $place
+     */
+    public function setPlace($place): void
     {
         $this->place = $place;
-
-        return $this;
     }
 
     /**
@@ -168,6 +187,42 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
                 $participant->setEvent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
 
         return $this;
     }
