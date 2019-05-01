@@ -6,11 +6,17 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity(
+ *     fields={"username"},
+ *     errorPath="username",
+ *     message="Username already used"
+ * )
  */
 class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterface
 {

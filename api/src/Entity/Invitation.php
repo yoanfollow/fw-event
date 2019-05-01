@@ -6,10 +6,16 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\InvitationRepository")
+ * @UniqueEntity(
+ *     fields={"event", "recipient"},
+ *     errorPath="recipient",
+ *     message="User is already invited to this event"
+ * )
  */
 class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {

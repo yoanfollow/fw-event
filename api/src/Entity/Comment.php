@@ -6,10 +6,18 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
+ * @UniqueEntity(
+ *     fields={"author", "event"},
+ *     errorPath="author",
+ *     message="User already left a comment for this event"
+ * )
  */
 class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {
@@ -32,7 +40,13 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     private $content;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Range(
+     *      min = 1,
+     *      max = 5,
+     *      minMessage = "Rate must at least {{ limit }}",
+     *      maxMessage = "Rate cannot be greater than {{ limit }}"
+     * )
      */
     private $rate;
 

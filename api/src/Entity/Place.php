@@ -6,10 +6,16 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\PlaceRepository")
+ * @UniqueEntity(
+ *     fields={"name"},
+ *     errorPath="name",
+ *     message="A place {{ value }} already exists"
+ * )
  */
 class Place implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {
