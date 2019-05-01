@@ -7,9 +7,13 @@ use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\PlaceRepository")
  * @UniqueEntity(
  *     fields={"name"},
@@ -23,41 +27,49 @@ class Place implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $streetNumber;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write"})
      */
     private $streetName;
 
     /**
      * @ORM\Column(type="string", length=16)
+     * @Groups({"read", "write"})
      */
     private $postalCode;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write"})
      */
     private $country;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"read"})
      */
     private $createdAt;
 

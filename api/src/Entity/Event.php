@@ -3,15 +3,22 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"},
+ *     normalizationContext={"groups"={"read_event"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
  */
 class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
@@ -20,49 +27,66 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read_event"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read_event", "write"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"read_event", "write"})
      */
     private $description;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"read_event"})
+     * Organizer is automatically filled in entity hook
      */
     private $organizer;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"read_event", "write"})
      */
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\GreaterThan(propertyPath="startAt")
+     * @Groups({"read_event", "write"})
      */
     private $endAt;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="event", orphanRemoval=true)
+     * @Groups({"read_event", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $participants;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Place")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"read_event", "write"})
      */
     private $place;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="event")
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $comments;
+
+    /**
      * @ORM\Column(type="datetime")
+     * @Groups({"read_event"})
      */
     private $createdAt;
 
@@ -76,9 +100,11 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      */
     private $deletedAt;
 
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -225,6 +251,37 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     public function setDeletedAt(?\DateTimeInterface $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setM($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            // set the owning side to null (unless already changed)
+            if ($comment->getM() === $this) {
+                $comment->setM(null);
+            }
+        }
 
         return $this;
     }

@@ -3,13 +3,20 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"post"},
+ *     itemOperations={"get", "put", "delete"},
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\InvitationRepository")
  * @UniqueEntity(
  *     fields={"event", "recipient"},
@@ -23,33 +30,40 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="participants")
      * @ORM\JoinColumn(nullable=false)
+     * @ApiSubresource(maxDepth=1)
+     * @Groups({"read", "write"})
      */
     private $event;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"read", "write", "read_event"})
      */
     private $recipient;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"read", "write", "read_event"})
      */
     private $confirmed;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read", "write", "read_event"})
      */
     private $expireAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"read", "read_event"})
      */
     private $createdAt;
 

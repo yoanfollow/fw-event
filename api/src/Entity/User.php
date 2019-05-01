@@ -8,9 +8,15 @@ use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get", "put"},
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}},
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(
  *     fields={"username"},
@@ -24,37 +30,44 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write", "read_event"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"write"})
      */
     private $password;
 
     /**
      * @var array
      * @ORM\Column(type="array")
+     * @Groups({"read"})
      */
     private $roles;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write", "read_event"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     * @Groups({"read", "write"})
      */
     private $avatar;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"read"})
      */
     private $createdAt;
 
@@ -179,26 +192,13 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
         return $this;
     }
 
-    /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * This can return null if the password was not encoded using a salt.
-     *
-     * @return string|null The salt
-     */
     public function getSalt()
     {
-        // TODO: Implement getSalt() method.
+        return null;
     }
 
-    /**
-     * Removes sensitive data from the user.
-     *
-     * This is important if, at any given point, sensitive information like
-     * the plain-text password is stored on this object.
-     */
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+
     }
 }
