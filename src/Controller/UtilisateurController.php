@@ -99,9 +99,7 @@ class UtilisateurController extends AbstractFOSRestController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="utilisateur_edit", methods={"GET","POST"})
-     */
+
     /**
      * @Rest\Post(
      * path = "/{utilisateurID}/edit",
