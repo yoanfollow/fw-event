@@ -11,12 +11,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
- *     collectionOperations={"post"},
- *     itemOperations={"get", "put", "delete"},
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
- * )
  * @ORM\Entity(repositoryClass="App\Repository\InvitationRepository")
  * @UniqueEntity(
  *     fields={"event", "recipient"},
@@ -30,14 +24,13 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     * @Groups({"read", "read_event"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="participants")
      * @ORM\JoinColumn(nullable=false)
-     * @ApiSubresource(maxDepth=1)
      * @Groups({"read", "write"})
      */
     private $event;

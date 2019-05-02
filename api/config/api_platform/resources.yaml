@@ -1,0 +1,53 @@
+resources:
+    App\Entity\Comment:
+        collectionOperations: [post]
+        itemOperations: [get, put, delete]
+        attributes:
+            normalization_context:
+                groups: ['read_comment']
+            denormalization_context:
+                groups: ['write']
+        subresourceOperations:
+            api_events_comments_get_subresource:
+                method: get
+                normalization_context:
+                    groups: ['read_event']
+
+    App\Entity\Event:
+        collectionOperations: [get]
+        itemOperations: [get]
+        attributes:
+            normalization_context:
+                groups: ['read_event']
+            denormalization_context:
+                groups: ['write']
+
+    App\Entity\Invitation:
+        collectionOperations: [post]
+        itemOperations: [get, put, delete]
+        attributes:
+            normalization_context:
+                groups: ['read']
+            denormalization_context:
+                groups: ['write']
+        subresourceOperations:
+            api_events_invitations_get_subresource:
+                method: get
+                normalization_context:
+                    groups: ['read_event']
+
+    App\Entity\Place:
+        attributes:
+            normalization_context:
+                groups: ['read']
+            denormalization_context:
+                groups: ['write']
+
+    App\Entity\User:
+        collectionOperations: [get]
+        itemOperations: [get, put]
+        attributes:
+            normalization_context:
+                groups: ['read']
+            denormalization_context:
+                groups: ['write']

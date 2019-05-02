@@ -13,12 +13,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource(
- *     collectionOperations={"get"},
- *     itemOperations={"get"},
- *     normalizationContext={"groups"={"read_event"}},
- *     denormalizationContext={"groups"={"write"}}
- * )
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
  */
 class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface

@@ -12,18 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
- * @ApiResource(
- *     collectionOperations={"post"},
- *     itemOperations={"get", "put", "delete"},
- *     normalizationContext={"groups"={"read_comment"}},
- *     denormalizationContext={"groups"={"write"}},
- *     subresourceOperations={
- *          "api_events_comments_get_subresource"={
- *              "method"="GET",
- *              "normalization_context"={"groups"={"read_event"}}
- *          }
- *     }
- * )
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  * @UniqueEntity(
  *     fields={"author", "event"},
