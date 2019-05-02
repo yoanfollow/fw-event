@@ -111,7 +111,7 @@ class CommentaireController extends AbstractFOSRestController
         $utilisateur=$commentaire->getUtilisateur();
 
         //Juste le créateur de commentaire à le droit de le modifier
-        if($utilisateurConnecte->getID()!= $utilisateur->getId()){
+        if($utilisateurConnecte->getId()!= $utilisateur->getId()){
             return $this->json(['error' => 'Vous n\'avez pas le droit de modifier ce commentaire'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -148,7 +148,7 @@ class CommentaireController extends AbstractFOSRestController
         $utilisateur=$commentaire->getUtilisateur();
 
         //Juste le créateur de commentaire à le droit de modifier son evenement
-        if($utilisateurActuel->getID()!= $utilisateur->getId()){
+        if($utilisateurActuel->getId()!= $utilisateur->getId()){
             return $this->json(['error' => 'Vous n\'avez pas le droit de modifier ce commentaire'], Response::HTTP_BAD_REQUEST);
         }
 
