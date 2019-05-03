@@ -44,7 +44,38 @@ resources:
                 groups: ['write']
 
     App\Entity\User:
-        collectionOperations: [get]
+        collectionOperations:
+            get: ~
+            register:
+                route_name: register
+                swagger_context:
+                    parameters:
+                        -
+                            name: body
+                            in: body
+                            type: json
+                            schema:
+                                properties:
+                                    username: {type: string}
+                                    email: {type: email}
+                                    plainPassword: {type: string}
+                    consumes: ['application/json']
+                    produces: ['application/json', 'text/html']
+
+            auth:
+                route_name: login_check
+                swagger_context:
+                    parameters:
+                        -
+                            name: body
+                            in: body
+                            schema:
+                                type: object
+                                properties:
+                                    username: {type: string}
+                                    password: {type: string}
+
+
         itemOperations: [get, put]
         attributes:
             normalization_context:
