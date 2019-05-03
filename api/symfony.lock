@@ -176,6 +176,9 @@
     "psr/simple-cache": {
         "version": "1.0.1"
     },
+    "symfony-bundles/json-request-bundle": {
+        "version": "v2.0.1"
+    },
     "symfony/asset": {
         "version": "v4.2.7"
     },
@@ -240,6 +243,9 @@
             ".env"
         ]
     },
+    "symfony/form": {
+        "version": "v4.2.8"
+    },
     "symfony/framework-bundle": {
         "version": "4.2",
         "recipe": {
@@ -268,8 +274,17 @@
     "symfony/inflector": {
         "version": "v4.2.7"
     },
+    "symfony/intl": {
+        "version": "v4.2.8"
+    },
+    "symfony/options-resolver": {
+        "version": "v4.2.8"
+    },
     "symfony/orm-pack": {
         "version": "v1.0.6"
+    },
+    "symfony/polyfill-intl-icu": {
+        "version": "v1.11.0"
     },
     "symfony/polyfill-mbstring": {
         "version": "v1.11.0"
