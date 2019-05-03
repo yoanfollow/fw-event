@@ -5,6 +5,7 @@ namespace App\Controller;
 
 
 use App\Entity\User;
+use App\Form\UserRegistrationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,31 +14,44 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class AuthController extends AbstractController
 {
 
-    public function register(Request $request, UserPasswordEncoderInterface $encoder)
+    /**
+     * Controller for user registration
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @return User|Response
+     */
+    public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
-        $em = $this->getDoctrine()->getManager();
+        $user = new User();
+        $form = $this->createForm(UserRegistrationType::class, $user);
+        $form->handleRequest($request);
 
-        $username = $request->request->get('_username');
-        $password = $request->request->get('_password');
-
-        if (!$username || !$password) {
-            return new Response("Missing credentials", Response::HTTP_BAD_REQUEST);
+        if (!$form->isSubmitted()) {
+            return new Response('No form submitted', Response::HTTP_BAD_REQUEST);
         }
 
+
+        if (!$form->isValid()) {
+            return new Response(Response::HTTP_BAD_REQUEST);
+        }
+
+        // encode the plain password
+        $user->setPassword(
+            $passwordEncoder->encodePassword(
+                $user,
+                $form->get('plainPassword')->getData()
+            )
+        );
+
         try {
-            $user = new User();
-            $user
-                ->setUsername($username)
-                ->setPassword($encoder->encodePassword($user, $password))
-                ->setEmail('jeremie.quinson@gmail.com')
-            ;
+            $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
         } catch (\Exception $e) {
             return new Response("Error: ".$e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new Response(sprintf('User %s successfully created', $user->getUsername()));
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
 
