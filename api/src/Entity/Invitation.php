@@ -24,14 +24,16 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *     message="User is already invited to this event"
  * )
  * @ApiResource(
- *      collectionOperations={"post"},
+ *      collectionOperations={"get", "post"={
+ *          "defaults"={"confirmed"=false}
+ *      }},
  *      itemOperations={"get","put","delete"},
  *      attributes={
- *          "normalization_context"={"groups"={"read"}},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"read_invitation"}},
+ *          "denormalization_context"={"groups"={"write_invitation"}}
  *     },
  *     subresourceOperations={
- *          "api_events_comments_get_subresource"={
+ *          "api_events_participants_get_subresource"={
  *              "method"="get",
  *              "normalization_context"={"groups"={"read_event"}}
  *          }
@@ -53,39 +55,41 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read", "read_event"})
+     * @Groups({"read_invitation", "read_event"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="participants")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read", "write"})
+     * @Groups({"read_invitation", "write_invitation"})
      */
     private $event;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read", "write", "read_event"})
+     * @Groups({"read_invitation", "write_invitation", "post_event", "read_event"})
+     * @Assert\NotBlank
      */
     private $recipient;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"read", "write", "read_event"})
+     * @Groups({"read_invitation", "read_event"})
      */
     private $confirmed;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read", "write", "read_event"})
+     * @Groups({"read_invitation", "write_invitation", "post_event", "read_event"})
+     * @Assert\GreaterThan("today")
      */
     private $expireAt;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read", "read_event"})
+     * @Groups({"read_invitation", "read_event"})
      */
     private $createdAt;
 
@@ -98,6 +102,12 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $deletedAt;
+
+    public function __construct()
+    {
+        $this->confirmed = false;
+    }
+
 
     public function getId(): ?int
     {

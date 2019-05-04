@@ -20,11 +20,24 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
  * @ApiResource(
- *      collectionOperations={"get"},
- *      itemOperations={"get"},
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "denormalization_context"={"groups"={"post_event", "write_event"}}
+ *          }
+ *     },
+ *      itemOperations={
+ *          "get",
+ *          "put"={
+ *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getOrganizer() == user)",
+ *              "denormalization_context"={"groups"={"put_event", "write_event"}}
+ *          },
+ *          "delete"={
+ *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getOrganizer() == user)"
+ *          }
+ *     },
  *      attributes={
- *          "normalization_context"={"groups"={"read_event"}},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"read_event"}}
  *      }
  * )
  * @ApiFilter(SearchFilter::class, properties={
@@ -49,13 +62,13 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_event", "write"})
+     * @Groups({"read_event", "write_event"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"read_event", "write"})
+     * @Groups({"read_event", "write_event"})
      */
     private $description;
 
@@ -63,39 +76,42 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read_event"})
-     * Organizer is automatically filled in entity hook
+     * Organizer is automatically filled in entity hook (See App\EntityHook)
      */
     private $organizer;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read_event", "write"})
+     * @Groups({"read_event", "write_event"})
      */
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\GreaterThan(propertyPath="startAt")
-     * @Groups({"read_event", "write"})
+     * @Groups({"read_event", "write_event"})
      */
     private $endAt;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="event", orphanRemoval=true)
-     * @Groups({"read_event", "write"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="event", orphanRemoval=true, cascade={"persist", "remove"})
+     * @Groups({"read_event", "post_event"})
+     * @Assert\Valid
      * @ApiSubresource(maxDepth=1)
      */
     private $participants;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Place")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Place", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_event", "write"})
+     * @Assert\Valid
+     * @Groups({"read_event", "write_event"})
      */
     private $place;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="event")
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="event", cascade={"remove"})
+     * @Groups({"read_event"})
      * @ApiSubresource(maxDepth=1)
      */
     private $comments;

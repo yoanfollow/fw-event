@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(
@@ -54,8 +55,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *                          "in"="body",
  *                          "schema"={
  *                              "properties"={
- *                                  "username"={"type"="string"},
- *                                  "password"={"type"="string"}
+ *                                  "username"={"type"="string", "example"="jquinson"},
+ *                                  "password"={"type"="string", "example"="test"}
  *                              }
  *                          }
  *                      }
@@ -78,7 +79,7 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     * @Groups({"read", "read_event", "read_invitation"})
      */
     private $id;
 
@@ -170,7 +171,12 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
 
     public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        if (!in_array('ROLE_USER', $roles)) {
+            $roles[] = 'ROLE_USER';
+        }
+
+        return $roles;
     }
 
     public function setRoles(array $roles): self
