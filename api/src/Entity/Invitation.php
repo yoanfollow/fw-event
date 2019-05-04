@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
+use App\Helpers\DateHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -196,5 +197,16 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
         $this->deletedAt = $deletedAt;
 
         return $this;
+    }
+
+    /**
+     * @Groups({"read_invitation"})
+     */
+    public function isExpired()
+    {
+        if (!$this->expireAt) {
+            return DateHelper::getToday() > $this->expireAt;
+        }
+        return DateHelper::getToday() > $this->getEvent()->getEndAt();
     }
 }
