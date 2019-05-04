@@ -36,6 +36,16 @@ class AppFixtures extends Fixture
             ->setUsername('admin')
             ->setEmail('jeremie.quinson@gmail.com')
             ->setPassword($this->encoder->encodePassword($user, 'test'))
+            ->setRoles(['ROLE_ADMIN'])
+        ;
+        $manager->persist($user);
+
+        // Main user
+        $user = new User();
+        $user
+            ->setUsername('jquinson')
+            ->setEmail('jeremie.quinson+2@gmail.com')
+            ->setPassword($this->encoder->encodePassword($user, 'test'))
         ;
         $manager->persist($user);
 
@@ -68,7 +78,7 @@ class AppFixtures extends Fixture
             // Pick a random first name and last name to build a complet username and email
             $firstName = $firstNames[rand(0, count($firstNames) - 1)];
             $lastName = $lastNames[rand(0, count($lastNames) - 1)];
-            $userName = sprintf('%s.%s', strtolower(str_replace(' ', '', $firstName)), strtolower(str_replace(' ', '', $lastName)));
+            $userName = sprintf('%s.%s.%d', strtolower(str_replace(' ', '', $firstName)), strtolower(str_replace(' ', '', $lastName)), $i);
             $email = sprintf('%s.%s@yopmail.com', strtolower(str_replace(' ', '', $firstName)), strtolower(str_replace(' ', '', $lastName)));
 
             $user = new User();
