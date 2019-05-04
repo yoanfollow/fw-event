@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvitationRepository")
@@ -31,6 +37,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          }
  *     }
  * )
+ *
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "id": "exact",
+ *     "event": "exact",
+ *     "receiver": "exact",
+ * })
+ * @ApiFilter(DateFilter::class, properties={"expireAt"}, strategy=DateFilter::EXCLUDE_NULL)
+ * @ApiFilter(BooleanFilter::class, properties={"confirmed"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "rate", "createdAt"}, arguments={"orderParameterName"="order"})
  */
 class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {

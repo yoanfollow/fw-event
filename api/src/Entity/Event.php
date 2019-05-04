@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\EntityHook\AutoCreatedAtInterface;
@@ -11,6 +12,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
@@ -22,6 +27,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"write"}}
  *      }
  * )
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "id": "exact",
+ *     "name": "partial",
+ *     "organizer": "partial",
+ *     "place": "exact",
+ *     "description": "partial"
+ * })
+ * @ApiFilter(DateFilter::class, properties={"startAt", "endAt"}, strategy=DateFilter::EXCLUDE_NULL)
+ * @ApiFilter(OrderFilter::class, properties={"id", "name", "startAt", "endAt", "createdAt"}, arguments={"orderParameterName"="order"})
  */
 class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {

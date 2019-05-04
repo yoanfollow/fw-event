@@ -2,12 +2,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+
+
 
 /**
  * @ApiResource(
@@ -20,6 +25,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     errorPath="name",
  *     message="A place {{ value }} already exists"
  * )
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "id": "exact",
+ *     "name": "partial",
+ *     "streetNumber": "partial",
+ *     "city": "partial",
+ *     "streetName": "partial",
+ *     "postalCode": "partial",
+ *     "country": "partial",
+ * })
+ * @ApiFilter(OrderFilter::class, properties={"id", "name", "createdAt"}, arguments={"orderParameterName"="order"})
  */
 class Place implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {
