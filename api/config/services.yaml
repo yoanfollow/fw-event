@@ -17,3 +17,7 @@ services:
         autoconfigure: false
         tags:
             - { name: doctrine.event_subscriber }
+
+    App\EventListener\AuthenticationSuccessListener:
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
