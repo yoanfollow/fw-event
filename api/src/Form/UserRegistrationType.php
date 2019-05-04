@@ -27,6 +27,7 @@ class UserRegistrationType extends AbstractType
             ->add('email', EmailType::class)
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
+                'error_mapping' => 'plainPassword',
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a password',

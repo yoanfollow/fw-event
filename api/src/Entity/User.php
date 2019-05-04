@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -79,12 +80,15 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"read", "write", "read_event"})
+     * @Assert\NotBlank
+     * @Assert\Email
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"write"})
+     * @Assert\NotBlank(message="Password cannot be blank")
      */
     private $password;
 
@@ -98,6 +102,7 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"read", "write", "read_event"})
+     * @Assert\NotBlank(message="Username cannot be blank")
      */
     private $username;
 
