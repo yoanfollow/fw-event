@@ -18,6 +18,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     errorPath="author",
  *     message="User already left a comment for this event"
  * )
+ * @ApiResource(
+ *     collectionOperations={"post"},
+ *     itemOperations={"get","put","delete"},
+ *     attributes={
+ *          "normalization_context"={"groups"={"read_comment"}},
+ *          "denormalization_context"={"groups"={"write"}}
+ *     },
+ *     subresourceOperations={
+ *          "api_events_comments_get_subresource"={
+ *              "method"="get",
+ *              "normalization_context"={"groups"={"read_event"}}
+ *          }
+ *     }
+ * )
  */
 class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {

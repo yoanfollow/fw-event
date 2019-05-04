@@ -14,6 +14,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
+ * @ApiResource(
+ *      collectionOperations={"get"},
+ *      itemOperations={"get"},
+ *      attributes={
+ *          "normalization_context"={"groups"={"read_event"}},
+ *          "denormalization_context"={"groups"={"write"}}
+ *      }
+ * )
  */
 class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {

@@ -17,6 +17,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     errorPath="recipient",
  *     message="User is already invited to this event"
  * )
+ * @ApiResource(
+ *      collectionOperations={"post"},
+ *      itemOperations={"get","put","delete"},
+ *      attributes={
+ *          "normalization_context"={"groups"={"read"}},
+ *          "denormalization_context"={"groups"={"write"}}
+ *     },
+ *     subresourceOperations={
+ *          "api_events_comments_get_subresource"={
+ *              "method"="get",
+ *              "normalization_context"={"groups"={"read_event"}}
+ *          }
+ *     }
+ * )
  */
 class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 {

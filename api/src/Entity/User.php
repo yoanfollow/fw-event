@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,6 +16,54 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     fields={"username"},
  *     errorPath="username",
  *     message="Username already used"
+ * )
+ * @ApiResource(
+ *      collectionOperations={
+ *          "get",
+ *          "register"={
+ *              "route_name"="register",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                      {
+ *                          "name"="body",
+ *                          "in"="body",
+ *                          "type"="json",
+ *                          "schema"={
+ *                              "properties"={
+ *                                  "username"={"type"="string"},
+ *                                  "email"={"type"="string"},
+ *                                  "plainPassword"={"type"="string"}
+ *                              }
+ *                          }
+ *                      }
+ *                  },
+ *                  "consumes"={"application/json"},
+ *                  "produces"={"application/json"},
+ *              }
+ *          },
+ *          "auth"={
+ *              "route_name"="login_check",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                      {
+ *                          "name"="body",
+ *                          "in"="body",
+ *                          "schema"={
+ *                              "properties"={
+ *                                  "username"={"type"="string"},
+ *                                  "password"={"type"="string"}
+ *                              }
+ *                          }
+ *                      }
+ *                  }
+ *              }
+ *          },
+ *     },
+ *      itemOperations={"get", "put"},
+ *      attributes={
+ *          "normalization_context"={"groups"={"read"}},
+ *          "denormalization_context"={"groups"={"write"}}
+ *      }
  * )
  */
 class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterface
