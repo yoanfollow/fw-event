@@ -36,12 +36,20 @@ final class ExpiredInvitationFilter extends AbstractContextAwareFilter
             return;
         }
 
+        [$eventAlias, $eventProperty, $associations] = $this->addJoinsForNestedProperty(
+            'event.endAt',
+            $queryBuilder->getRootAliases()[0],
+            $queryBuilder,
+            $queryNameGenerator,
+            $resourceClass
+        );
+
 
         $value = $this->normalizeValue($value, $property);
         if ($value) {
-            $queryString = '(o.expireAt IS NOT NULL AND o.expireAt < :today) AND event.endAt < :today';
+            $queryString = '(o.expireAt IS NOT NULL AND o.expireAt < :today) AND '.$eventAlias.'.'.$eventProperty.' < :today';
         } else {
-            $queryString = '(o.expireAt IS NOT NULL AND o.expireAt >= :today) AND event.endAt >= :today';
+            $queryString = '(o.expireAt IS NOT NULL AND o.expireAt >= :today) AND '.$eventAlias.'.'.$eventProperty.' >= :today';
         }
         $queryBuilder
             ->leftJoin('o.event', 'event')
