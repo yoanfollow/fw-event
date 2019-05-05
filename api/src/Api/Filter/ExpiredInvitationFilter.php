@@ -32,11 +32,13 @@ final class ExpiredInvitationFilter extends AbstractContextAwareFilter
         string $operationName = null
     ) {
 
+        // Handle only property "isExpired" for the entity Invitation
         if ($property !== 'isExpired' || $resourceClass !== Invitation::class) {
             return;
         }
 
-        [$eventAlias, $eventProperty, $associations] = $this->addJoinsForNestedProperty(
+        // Use property helper to join event table properly in query. Get Right alias and property name
+        [$eventAlias, $eventProperty] = $this->addJoinsForNestedProperty(
             'event.endAt',
             $queryBuilder->getRootAliases()[0],
             $queryBuilder,
@@ -45,6 +47,7 @@ final class ExpiredInvitationFilter extends AbstractContextAwareFilter
         );
 
 
+        // According to value (true or false), filter expired or not expired invitation
         $value = $this->normalizeValue($value, $property);
         if ($value) {
             $queryString = '(o.expireAt IS NOT NULL AND o.expireAt < :today) AND '.$eventAlias.'.'.$eventProperty.' < :today';
