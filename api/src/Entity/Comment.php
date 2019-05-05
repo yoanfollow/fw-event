@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-
+use App\Validator\EventFinished;
 
 
 /**
@@ -27,7 +27,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *     itemOperations={"get","put","delete"},
  *     attributes={
  *          "normalization_context"={"groups"={"read_comment"}},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "denormalization_context"={"groups"={"post_comment"}}
  *     },
  *     subresourceOperations={
  *          "api_events_comments_get_subresource"={
@@ -65,7 +65,7 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"read_comment", "write", "read_event"})
+     * @Groups({"read_comment", "post_comment", "read_event"})
      */
     private $content;
 
@@ -77,14 +77,16 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      *      minMessage = "Rate must at least {{ limit }}",
      *      maxMessage = "Rate cannot be greater than {{ limit }}"
      * )
-     * @Groups({"read_comment", "write", "read_event"})
+     * @Groups({"read_comment", "post_comment", "read_event"})
      */
     private $rate;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_comment", "write"})
+     * @Groups({"read_comment", "post_comment"})
+     * @Assert\NotBlank
+     * @EventFinished(message="Event must be finished to post a comment")
      */
     private $event;
 
