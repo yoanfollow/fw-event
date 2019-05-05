@@ -23,21 +23,24 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *      collectionOperations={
  *          "get",
  *          "post"={
- *              "denormalization_context"={"groups"={"post_event", "write_event"}}
+ *              "denormalization_context"={"groups"={"post_event", "write_event"}},
+ *              "validation_groups"={"Default", "postValidation"}
  *          }
  *     },
  *      itemOperations={
  *          "get",
  *          "put"={
  *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getOrganizer() == user)",
- *              "denormalization_context"={"groups"={"put_event", "write_event"}}
+ *              "denormalization_context"={"groups"={"put_event", "write_event"}},
+ *              "validation_groups"={"Default", "putValidation"}
  *          },
  *          "delete"={
  *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getOrganizer() == user)"
  *          }
  *     },
  *      attributes={
- *          "normalization_context"={"groups"={"read_event"}}
+ *          "normalization_context"={"groups"={"read_event"}},
+ *          "force_eager"=false
  *      }
  * )
  * @ApiFilter(SearchFilter::class, properties={
@@ -56,7 +59,7 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read_event", "read_user", "read_user"})
+     * @Groups({"read_event", "read_user"})
      */
     private $id;
 
@@ -94,9 +97,9 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     private $endAt;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="event", orphanRemoval=true, cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="event", orphanRemoval=true, cascade={"persist", "remove"}, fetch="LAZY")
      * @Groups({"read_event", "post_event"})
-     * @Assert\Valid
+     * @Assert\Valid(groups={"postValidation"})
      * @ApiSubresource(maxDepth=1)
      */
     private $participants;
@@ -104,7 +107,7 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Place", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
-     * @Assert\Valid
+     * @Assert\Valid(groups={"Default"})
      * @Groups({"read_event", "write_event", "read_user"})
      */
     private $place;

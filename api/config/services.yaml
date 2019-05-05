@@ -7,6 +7,12 @@ services:
         resource: '../src/*'
         exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
 
+    App\Action\:
+        resource: '../src/Action'
+        public: true
+        autowire: true
+        tags: ['controller.service_arguments']
+
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']

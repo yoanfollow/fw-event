@@ -31,5 +31,7 @@ WORKDIR /var/www/project/
 
 
 RUN mkdir -p /.composer/cache
-RUN chmod 777 /.composer/cache
+RUN chmod 777 -R /.composer/cache
+RUN chmod 777 -R /var/www/project/var
+RUN chmod 777 -R /var/www/project/public/uploads
 

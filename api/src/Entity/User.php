@@ -9,11 +9,13 @@ use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 
 /**
@@ -65,14 +67,20 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *              }
  *          },
  *     },
- *      itemOperations={"get", "put"},
- *      attributes={
- *          "normalization_context"={"groups"={"read_user"}},
- *          "denormalization_context"={"groups"={"write"}}
- *      }
+ *      itemOperations={
+ *          "get",
+ *          "put"={
+ *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user)",
+ *              "denormalization_context"={"groups"={"put_user"}}
+ *          }
+ *     },
+ *     attributes={
+ *         "normalization_context"={"groups"={"read_user"}}
+ *     }
  * )
  * @ApiFilter(SearchFilter::class, properties={"id": "exact", "username": "partial", "email": "partial"})
  * @ApiFilter(OrderFilter::class, properties={"id", "username", "email", "createdAt"}, arguments={"orderParameterName"="order"})
+ * @Vich\Uploadable
  */
 class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterface
 {
@@ -86,7 +94,7 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_user", "write", "read_event"})
+     * @Groups({"read_user", "write", "put_user", "read_event"})
      * @Assert\NotBlank
      * @Assert\Email
      */
@@ -94,7 +102,7 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"write"})
+     * @Groups({"write", "put_user"})
      * @Assert\NotBlank(message="Password cannot be blank")
      */
     private $password;
@@ -114,15 +122,20 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
     private $username;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
-     * @Groups({"read_user", "write"})
+     * @Groups({"read_user", "put_user", "read_event"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Media")
      */
     private $avatar;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="recipient", orphanRemoval=true, cascade={"remove"})
+     * @var string $avatarUrl
      * @Groups({"read_user"})
-     * @Assert\Valid
+     */
+    private $avatarUrl;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="recipient", orphanRemoval=true, cascade={"remove"}, fetch="LAZY")
+     * @Groups({"read_user_invitation"})
      * @ApiSubresource(maxDepth=1)
      */
     private $invitations;
@@ -142,6 +155,7 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $deletedAt;
+
 
     public function __construct()
     {
@@ -211,16 +225,26 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
         return $this;
     }
 
-    public function getAvatar(): ?string
+    public function getAvatar(): ?Media
     {
         return $this->avatar;
     }
 
-    public function setAvatar(?string $avatar): self
+    public function setAvatar(?Media $avatar): self
     {
         $this->avatar = $avatar;
 
         return $this;
+    }
+
+    public function getAvatarUrl(): ?string
+    {
+        return $this->avatarUrl;
+    }
+
+    public function setAvatarUrl(string $avatarUrl): void
+    {
+        $this->avatarUrl = $avatarUrl;
     }
 
     public function getInvitations()

@@ -41,7 +41,7 @@ use App\Api\Filter\ExpiredInvitationFilter;
  *          },
  *          "api_users_invitations_get_subresource"={
  *              "method"="get",
- *              "normalization_context"={"groups"={"read_user"}}
+ *              "normalization_context"={"groups"={"read_user_invitation"}}
  *          }
  *     },
  * )
