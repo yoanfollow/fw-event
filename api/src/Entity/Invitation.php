@@ -38,8 +38,12 @@ use App\Api\Filter\ExpiredInvitationFilter;
  *          "api_events_participants_get_subresource"={
  *              "method"="get",
  *              "normalization_context"={"groups"={"read_event"}}
+ *          },
+ *          "api_users_invitations_get_subresource"={
+ *              "method"="get",
+ *              "normalization_context"={"groups"={"read_user"}}
  *          }
- *     }
+ *     },
  * )
  *
  * @ApiFilter(SearchFilter::class, properties={
@@ -58,14 +62,14 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read_invitation", "read_event"})
+     * @Groups({"read_invitation", "read_event", "read_user"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="participants")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_invitation", "write_invitation"})
+     * @Groups({"read_invitation", "write_invitation", "read_user"})
      */
     private $event;
 
@@ -79,20 +83,20 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"read_invitation", "read_event"})
+     * @Groups({"read_invitation", "read_event", "read_user"})
      */
     private $confirmed;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read_invitation", "write_invitation", "post_event", "read_event"})
+     * @Groups({"read_invitation", "write_invitation", "post_event", "read_event", "read_user"})
      * @Assert\GreaterThan("today")
      */
     private $expireAt;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read_invitation", "read_event"})
+     * @Groups({"read_invitation", "read_event", "read_user"})
      */
     private $createdAt;
 

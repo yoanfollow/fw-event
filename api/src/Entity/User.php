@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -66,7 +67,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *     },
  *      itemOperations={"get", "put"},
  *      attributes={
- *          "normalization_context"={"groups"={"read"}},
+ *          "normalization_context"={"groups"={"read_user"}},
  *          "denormalization_context"={"groups"={"write"}}
  *      }
  * )
@@ -79,13 +80,13 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read", "read_event", "read_invitation"})
+     * @Groups({"read_user", "read_event", "read_invitation"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "write", "read_event"})
+     * @Groups({"read_user", "write", "read_event"})
      * @Assert\NotBlank
      * @Assert\Email
      */
@@ -101,26 +102,34 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
     /**
      * @var array
      * @ORM\Column(type="array")
-     * @Groups({"read"})
+     * @Groups({"read_user"})
      */
     private $roles;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "write", "read_event"})
+     * @Groups({"read_user", "write", "read_event"})
      * @Assert\NotBlank(message="Username cannot be blank")
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read_user", "write"})
      */
     private $avatar;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="recipient", orphanRemoval=true, cascade={"remove"})
+     * @Groups({"read_user"})
+     * @Assert\Valid
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $invitations;
+
+    /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read"})
+     * @Groups({"read_user"})
      */
     private $createdAt;
 
@@ -212,6 +221,16 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
         $this->avatar = $avatar;
 
         return $this;
+    }
+
+    public function getInvitations()
+    {
+        return $this->invitations;
+    }
+
+    public function setInvitations($invitations): void
+    {
+        $this->invitations = $invitations;
     }
 
     public function getCreatedAt(): ?\DateTimeInterface

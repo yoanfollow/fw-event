@@ -56,19 +56,19 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read_event"})
+     * @Groups({"read_event", "read_user", "read_user"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_event", "write_event"})
+     * @Groups({"read_event", "write_event", "read_user"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"read_event", "write_event"})
+     * @Groups({"read_event", "write_event", "read_user"})
      */
     private $description;
 
@@ -82,14 +82,14 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read_event", "write_event"})
+     * @Groups({"read_event", "write_event", "read_user"})
      */
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\GreaterThan(propertyPath="startAt")
-     * @Groups({"read_event", "write_event"})
+     * @Groups({"read_event", "write_event", "read_user"})
      */
     private $endAt;
 
@@ -105,7 +105,7 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\ManyToOne(targetEntity="App\Entity\Place", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid
-     * @Groups({"read_event", "write_event"})
+     * @Groups({"read_event", "write_event", "read_user"})
      */
     private $place;
 
