@@ -82,7 +82,7 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     private $rate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Event")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read_comment", "write"})
      */

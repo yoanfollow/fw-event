@@ -45,7 +45,7 @@ use App\Api\Filter\ExpiredInvitationFilter;
  * @ApiFilter(SearchFilter::class, properties={
  *     "id": "exact",
  *     "event": "exact",
- *     "receiver": "exact",
+ *     "recipient": "exact",
  * })
  * @ApiFilter(DateFilter::class, properties={"expireAt"}, strategy=DateFilter::EXCLUDE_NULL)
  * @ApiFilter(ExpiredInvitationFilter::class)
@@ -70,7 +70,7 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     private $event;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="invitations")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read_invitation", "write_invitation", "post_event", "read_event"})
      * @Assert\NotBlank
