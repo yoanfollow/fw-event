@@ -7,6 +7,7 @@ use App\Entity\Event;
 use App\Entity\Invitation;
 use App\Entity\Place;
 use App\Entity\User;
+use App\Helpers\DateHelper;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -17,7 +18,13 @@ class AppFixtures extends Fixture
      */
     public function load(ObjectManager $manager)
     {
-        // Main user
+        $maxRandomPlaces = 20;
+        $maxRandomUsers = 10;
+        $maxRandomEventsPerUser = 50; // 10x50=500
+        $maxRandomInvitationsPerEvent = 10; // 10x50x10=5000
+        $maxRandomCommentPerEvent = 10; // For
+
+        // 2 Main users
         $user = new User();
         $user
             ->setUsername('admin')
@@ -27,7 +34,6 @@ class AppFixtures extends Fixture
         ;
         $manager->persist($user);
 
-        // Main user
         $user = new User();
         $user
             ->setUsername('jquinson')
@@ -43,24 +49,25 @@ class AppFixtures extends Fixture
         $eventQualifiers = ['Amazing', 'Boring', 'Weird', 'Common', 'Interesting', 'Agile', 'Satanic'];
         $eventTypes = ['Event', 'Meeting', 'Lunch', 'Date', 'Ritual'];
 
-        // Add random places for event fixtures
+        // Add 20 random places for event fixtures
         $places = [];
-        for ($placeKey = 1; $placeKey < 20; $placeKey++) {
+        for ($placeKey = 0; $placeKey < $maxRandomPlaces; $placeKey++) {
             $place = new Place();
-            $place->setName(sprintf('Amazing place %d', $placeKey))
-                ->setCity(sprintf('City %d', $placeKey))
+            $place->setName(sprintf('Amazing place %d', $placeKey + 1))
+                ->setCity(sprintf('City %d', $placeKey + 1))
                 ->setCountry(['France', 'Usa', 'Spain'][rand(0,2)])
-                ->setStreetNumber($placeKey)
-                ->setStreetName(sprintf('A random street "%s"', $placeKey))
-                ->setPostalCode(sprintf('350%s', sprintf("%02d", $placeKey)))
+                ->setStreetNumber($placeKey + 1)
+                ->setStreetName(sprintf('A random street "%s"', $placeKey + 1))
+                ->setPostalCode(sprintf('350%s', sprintf("%02d", $placeKey + 1)))
                 ;
             $manager->persist($place);
             $places[] = $place;
         }
 
 
+        // Create 10 random users
         $users = [];
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < $maxRandomUsers; $i++) {
 
             // Pick a random first name and last name to build a complet username and email
             $firstName = $firstNames[rand(0, count($firstNames) - 1)];
@@ -78,19 +85,20 @@ class AppFixtures extends Fixture
             $users[] = $user;
         }
 
-
+        // Create 50 random events per users (500 events)
+        // Set 20 passed events, 1 event in current day and 29 future events
         $events = [];
+        $invitations = [];
         foreach ($users as $userKey => $user) {
 
             // Create event organized for current user
-            $maxEvents = rand(20, 150);
-            for ($eventKey = 0; $eventKey < $maxEvents; $eventKey++) {
+            for ($eventKey = 0; $eventKey < $maxRandomEventsPerUser; $eventKey++) {
                 $eventQualifier = $eventQualifiers[rand(0, count($eventQualifiers) - 1)];
                 $eventType = $eventTypes[rand(0, count($eventTypes) - 1)];
                 $place = $places[rand(0, count($places) - 1)];
 
                 // Days before or after current date
-                $delay = rand(-10, 20);
+                $delay = $eventKey - 20; // 20 past event, 1 event today and 29 future events
 
                 // Start at
                 $startAt = new \DateTime();
@@ -130,8 +138,8 @@ class AppFixtures extends Fixture
                 // Prevent current user from receiver list by adding key in exclude list.
                 $excludeUsersKeys = [$userKey];
 
-                // Create invitations
-                for ($inviteKey = 0; $inviteKey < rand(4, 10); $inviteKey++) {
+                // Create 10 random invitations per events (5000)
+                for ($inviteKey = 0; $inviteKey < $maxRandomInvitationsPerEvent; $inviteKey++) {
                     while(in_array(($receiverKey = rand(0, count($users) - 1)), [$excludeUsersKeys]));
                     $excludeUsersKeys[] = $receiverKey;
 
@@ -150,6 +158,7 @@ class AppFixtures extends Fixture
                     }
 
                     $manager->persist($invitation);
+                    $invitations[] = $invitation;
                 }
             }
         }
@@ -162,14 +171,26 @@ class AppFixtures extends Fixture
             'Good',
             'Best event of the world'
         ];
-        foreach ($events as $event) {
 
-            // Create random comment.
+        // Filters event and get only finished events
+        // 20 events per users so 200 events
+        $finishedEvents = array_filter($events, function(Event $event) {
+            // If today, skip
+            if ($event->getEndAt()->format('Y-m-d') === DateHelper::getToday()->format('Y-m-d')) return false;
+            return ($event->getEndAt() < DateHelper::getToday());
+        });
+
+        // Add 10 comments per event (2000 comments)
+        foreach ($finishedEvents as $event) {
+            // Create 10 random comment per events (5000).
             // Add user key who commented in a excluded keys list.
             // Prevent organizer user to comment his own event by adding key in exclude list.
             $excludeUsersKeys = [$event->getOrganizer()->getId()];
-            for ($inviteKey = 0; $inviteKey < rand(4, 10); $inviteKey++) {
+            for ($commentKey = 0; $commentKey < $maxRandomCommentPerEvent; $commentKey++) {
                 while (in_array(($authorKey = rand(0, count($users) - 1)), [$excludeUsersKeys]));
+
+                // Avoid double comment for same user
+                $excludeUsersKeys[] = $users[$authorKey];
 
                 $note = rand(1, 5);
                 $comment = new Comment();
@@ -184,6 +205,21 @@ class AppFixtures extends Fixture
             }
         }
 
+
+        // Add 7 more user
+        $usersNames = ['jack.thedog.real', 'lady.rainicorn.real', 'finn.thehuman.real', 'noel.flantier.real', 'hubert.bonisseurdelabath.real', 'jimmy.hendrix.real', 'johnny.english.real'];
+
+        foreach ($usersNames as $usersName) {
+            // 2 Main users
+            $user = new User();
+            $user
+                ->setUsername($usersName)
+                ->setEmail($usersName.'@yopmail.com')
+                ->setPassword('test')
+                ->setRoles(['ROLE_USER'])
+            ;
+            $manager->persist($user);
+        }
 
         // Add more "consistent data" for specific tests
 
