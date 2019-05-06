@@ -11,7 +11,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AuthController extends AbstractController
 {
@@ -19,10 +18,9 @@ class AuthController extends AbstractController
     /**
      * Controller for user registration
      * @param Request $request
-     * @param UserPasswordEncoderInterface $passwordEncoder
      * @return User|JsonResponse
      */
-    public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function registerAction(Request $request)
     {
         $user = new User();
         $form = $this->createForm(UserRegistrationType::class, $user);
@@ -45,13 +43,8 @@ class AuthController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        // encode the plain password
-        $user->setPassword(
-            $passwordEncoder->encodePassword(
-                $user,
-                $form->get('plainPassword')->getData()
-            )
-        );
+        // Replace password in plainPassword. The entity hook will encrypt it.
+        $user->setPassword($form->get('plainPassword')->getData());
 
         // @todo: Add ApiResponseException to catch exception, render a proper JsonResponse and log error
         $em = $this->getDoctrine()->getManager();

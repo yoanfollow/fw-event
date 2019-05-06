@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Helpers\DateHelper;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
 
 class EntitySubscriber implements EventSubscriber
@@ -18,13 +19,18 @@ class EntitySubscriber implements EventSubscriber
     /** @var Security $security */
     private $security;
 
+    /** @var UserPasswordEncoderInterface $passwordEncoder */
+    private $passwordEncoder;
+
     /**
      * EntitySubscriber constructor.
      * @param Security $security
+     * @param UserPasswordEncoderInterface $passwordEncoder
      */
-    public function __construct(Security $security)
+    public function __construct(Security $security, UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->security = $security;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
     /**
@@ -55,6 +61,11 @@ class EntitySubscriber implements EventSubscriber
                 $entity->setOrganizer($user);
             }
         }
+
+        // Automatically hash password on user persist
+        if ($entity instanceof User) {
+            $entity->setPassword($this->passwordEncoder->encodePassword($entity, $entity->getPassword()));
+        }
     }
 
     /**
@@ -67,6 +78,11 @@ class EntitySubscriber implements EventSubscriber
         // Automatically set createdAt in entity implementing AutoUpdatedAtInterface (if it's not filled)
         if ($entity instanceof AutoUpdatedAtInterface) {
             $entity->setUpdatedAt(DateHelper::getToday(DateHelper::UTC_PARIS_TZ));
+        }
+
+        // Automatically hash password on user persist
+        if ($entity instanceof User) {
+            $entity->setPassword($this->passwordEncoder->encodePassword($entity, $entity->getPassword()));
         }
     }
 

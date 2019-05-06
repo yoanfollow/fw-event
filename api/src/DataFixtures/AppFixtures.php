@@ -9,22 +9,9 @@ use App\Entity\Place;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
-    /** @var UserPasswordEncoderInterface $encoder */
-    private $encoder;
-
-    /**
-     * AppFixtures constructor.
-     * @param UserPasswordEncoderInterface $encoder
-     */
-    public function __construct(UserPasswordEncoderInterface $encoder)
-    {
-        $this->encoder = $encoder;
-    }
-
     /**
      * @param ObjectManager $manager
      */
@@ -35,7 +22,7 @@ class AppFixtures extends Fixture
         $user
             ->setUsername('admin')
             ->setEmail('jeremie.quinson@gmail.com')
-            ->setPassword($this->encoder->encodePassword($user, 'test'))
+            ->setPassword('test')
             ->setRoles(['ROLE_ADMIN'])
         ;
         $manager->persist($user);
@@ -45,7 +32,7 @@ class AppFixtures extends Fixture
         $user
             ->setUsername('jquinson')
             ->setEmail('jeremie.quinson+2@gmail.com')
-            ->setPassword($this->encoder->encodePassword($user, 'test'))
+            ->setPassword('test')
         ;
         $manager->persist($user);
 
@@ -85,7 +72,7 @@ class AppFixtures extends Fixture
             $user
                 ->setUsername($userName)
                 ->setEmail($email)
-                ->setPassword($this->encoder->encodePassword($user, 'test'))
+                ->setPassword('test')
                 ;
             $manager->persist($user);
             $users[] = $user;

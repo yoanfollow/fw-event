@@ -25,6 +25,8 @@ class UserRegistrationType extends AbstractType
         $builder
             ->add('username')
             ->add('email', EmailType::class)
+
+            // Use plain password to avoid encrypting again the encrypted password (and not set password in form view if we decide to use the view)
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
                 'error_mapping' => 'plainPassword',
