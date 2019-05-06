@@ -53,6 +53,10 @@ class CommentaireController extends AbstractFOSRestController
         $evenementRepository = $this->getDoctrine()->getRepository(Evenement::class);
         $utilisateur = $utilisateurRepository->find($utilisateurID);
         $evenement = $evenementRepository->find($evenementID);
+        $dateActuel = new \DateTime('now');
+        if($dateActuel < $evenement->getDateDebut()){
+            return $this->json(['error' => 'cet événement n\'est pas encore commencé.'], Response::HTTP_BAD_REQUEST);
+        }
         $commentaire = new Commentaire();        
         $commentaire->setUtilisateur($utilisateur);
         $commentaire->setEvenement($evenement);
