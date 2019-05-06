@@ -11,6 +11,10 @@ use App\Helpers\DateHelper;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
+/**
+ * Create fixtures
+ * When I realized that Alice Bundle make it easier it was too late :(
+ */
 class AppFixtures extends Fixture
 {
     /**
@@ -53,7 +57,8 @@ class AppFixtures extends Fixture
         $places = [];
         for ($placeKey = 0; $placeKey < $maxRandomPlaces; $placeKey++) {
             $place = new Place();
-            $place->setName(sprintf('Amazing place %d', $placeKey + 1))
+            $place
+                ->setName(sprintf('Amazing place %d', $placeKey + 1))
                 ->setCity(sprintf('City %d', $placeKey + 1))
                 ->setCountry(['France', 'Usa', 'Spain'][rand(0,2)])
                 ->setStreetNumber($placeKey + 1)
@@ -118,7 +123,7 @@ class AppFixtures extends Fixture
                 // Create event
                 $event = new Event();
                 $event
-                    ->setName(sprintf('%s %s', $eventQualifier, $eventType))
+                    ->setName(sprintf('event name %d %s %s', $eventKey, $eventQualifier, $eventType))
                     ->setDescription(
                         sprintf('<p>%s %s details</p>
                         <p><strong>Lorem ipsum</strong> dolor sit amet, consectetur adipiscing elit. Duis ac ipsum tellus. Duis ut elit maximus, vulputate sem nec, consequat velit. Nam eget ligula nec felis rhoncus feugiat eu nec odio. Cras lacinia tellus nisl, ut blandit dui laoreet id. Ut vulputate mattis elit eget pellentesque. Cras ullamcorper magna non tincidunt dictum. Etiam pulvinar varius est, et convallis massa gravida sed. Suspendisse potenti. Phasellus ac rutrum est, vitae sodales dolor. Nam id lobortis libero. Maecenas non ipsum neque.</p>
@@ -218,7 +223,35 @@ class AppFixtures extends Fixture
                 ->setPassword('test')
                 ->setRoles(['ROLE_USER'])
             ;
+
             $manager->persist($user);
+
+            // 10 invitation per users (70 more in total)
+            for ($i = 0; $i < 10; $i++) {
+                $invitation = new Invitation();
+                $invitation
+                    ->setEvent($events[0])
+                    ->setRecipient($user)
+                    ->setConfirmed(rand(0, 1) !== 0)
+                ;
+                $manager->persist($invitation);
+                $invitations[] = $invitation;
+            }
+
+            // 10 comment per users (70 more in total)
+            for ($i = 0; $i < 10; $i++) {
+                $comment = new Comment();
+                $comment
+                    ->setEvent($finishedEvents[0])
+                    ->setAuthor($user)
+                    ->setContent('Great')
+                    ->setRate(4)
+                ;
+                $manager->persist($comment);
+                $comments[] = $comment;
+            }
+
+            $users[] = $user;
         }
 
         // Add more "consistent data" for specific tests
