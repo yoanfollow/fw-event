@@ -9,7 +9,6 @@ use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -70,12 +69,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *      itemOperations={
  *          "get",
  *          "put"={
- *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user)",
- *              "denormalization_context"={"groups"={"put_user"}}
+ *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
+ *              "denormalization_context"={"groups"={"user:put"}}
  *          }
  *     },
  *     attributes={
- *         "normalization_context"={"groups"={"read_user"}}
+ *         "normalization_context"={"groups"={"user:read"}}
  *     }
  * )
  * @ApiFilter(SearchFilter::class, properties={"id": "exact", "username": "partial", "email": "partial"})
@@ -88,13 +87,13 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read_user", "read_event", "read_invitation"})
+     * @Groups({"user:read", "event:read:user", "invitation:read:user"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_user", "write", "put_user", "read_event"})
+     * @Groups({"user:read", "user:put", "event:read:user", "invitation:read:user"})
      * @Assert\NotBlank
      * @Assert\Email
      */
@@ -102,7 +101,7 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"write", "put_user"})
+     * @Groups({"user:put"})
      * @Assert\NotBlank(message="Password cannot be blank")
      */
     private $password;
@@ -110,49 +109,51 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
     /**
      * @var array
      * @ORM\Column(type="array")
-     * @Groups({"read_user"})
+     * @Groups({"user:read", "invitation:read:user"})
      */
     private $roles;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_user", "write", "read_event"})
+     * @Groups({"user:read", "event:read:user", "invitation:read:user"})
      * @Assert\NotBlank(message="Username cannot be blank")
      */
     private $username;
 
     /**
-     * @Groups({"read_user", "put_user", "read_event"})
+     * @Groups({"user:read", "user:put", "event:read:user", "invitation:read:user"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Media")
      */
     private $avatar;
 
     /**
      * @var string $avatarUrl
-     * @Groups({"read_user"})
+     * @Groups({"user:read", "invitation:read:user"})
      */
     private $avatarUrl;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="recipient", orphanRemoval=true, cascade={"remove"}, fetch="LAZY")
-     * @Groups({"read_user_invitation"})
+     * @Groups({"user:read:invitation"})
      * @ApiSubresource(maxDepth=1)
      */
     private $invitations;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read_user"})
+     * @Groups({"user:read", "invitation:read:user"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $updatedAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $deletedAt;
 

@@ -26,13 +26,13 @@ use App\Validator\EventFinished;
  *     collectionOperations={"post"},
  *     itemOperations={"get","put","delete"},
  *     attributes={
- *          "normalization_context"={"groups"={"read_comment"}},
- *          "denormalization_context"={"groups"={"post_comment"}}
+ *          "normalization_context"={"groups"={"comment:read"}},
+ *          "denormalization_context"={"groups"={"comment:post"}}
  *     },
  *     subresourceOperations={
  *          "api_events_comments_get_subresource"={
  *              "method"="get",
- *              "normalization_context"={"groups"={"read_event"}}
+ *              "normalization_context"={"groups"={"event:read"}}
  *          }
  *     }
  * )
@@ -51,21 +51,21 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read_comment", "read_event"})
+     * @Groups({"comment:read", "event:read:comment"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_comment", "read_event"})
+     * @Groups({"comment:read", "event:read:comment"})
      * Author is automatically filled in entity hook
      */
     private $author;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"read_comment", "post_comment", "read_event"})
+     * @Groups({"comment:read", "comment:post", "event:read:comment"})
      */
     private $content;
 
@@ -77,14 +77,14 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      *      minMessage = "Rate must at least {{ limit }}",
      *      maxMessage = "Rate cannot be greater than {{ limit }}"
      * )
-     * @Groups({"read_comment", "post_comment", "read_event"})
+     * @Groups({"comment:read", "comment:post", "event:read:comment"})
      */
     private $rate;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_comment", "post_comment"})
+     * @Groups({"comment:read", "comment:post"})
      * @Assert\NotBlank
      * @EventFinished(message="Event must be finished to post a comment")
      */
@@ -92,17 +92,19 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read_comment", "read_event"})
+     * @Groups({"comment:read", "event:read:comment"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $updatedAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $deletedAt;
 

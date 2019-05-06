@@ -23,7 +23,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *      collectionOperations={
  *          "get",
  *          "post"={
- *              "denormalization_context"={"groups"={"post_event", "write_event"}},
+ *              "denormalization_context"={"groups"={"event:post", "event:write"}},
  *              "validation_groups"={"Default", "postValidation"}
  *          }
  *     },
@@ -31,7 +31,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *          "get",
  *          "put"={
  *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getOrganizer() == user)",
- *              "denormalization_context"={"groups"={"put_event", "write_event"}},
+ *              "denormalization_context"={"groups"={"event:write"}},
  *              "validation_groups"={"Default", "putValidation"}
  *          },
  *          "delete"={
@@ -39,7 +39,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *          }
  *     },
  *      attributes={
- *          "normalization_context"={"groups"={"read_event"}},
+ *          "normalization_context"={"groups"={"event:read"}},
  *          "force_eager"=false
  *      }
  * )
@@ -59,46 +59,46 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read_event", "read_user"})
+     * @Groups({"event:read", "user:read:event"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_event", "write_event", "read_user"})
+     * @Groups({"event:read", "event:write", "user:read:event", "invitation:read:event"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"read_event", "write_event", "read_user"})
+     * @Groups({"event:read", "event:write", "user:read:event", "invitation:read:event"})
      */
     private $description;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_event"})
+     * @Groups({"event:read", "invitation:read:event"})
      * Organizer is automatically filled in entity hook (See App\EntityHook)
      */
     private $organizer;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read_event", "write_event", "read_user"})
+     * @Groups({"event:read", "event:write", "user:read:event", "invitation:read:event"})
      */
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\GreaterThan(propertyPath="startAt")
-     * @Groups({"read_event", "write_event", "read_user"})
+     * @Groups({"event:read", "event:write", "user:read:event", "invitation:read:event"})
      */
     private $endAt;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="event", orphanRemoval=true, cascade={"persist", "remove"}, fetch="LAZY")
-     * @Groups({"read_event", "post_event"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="event", orphanRemoval=true, cascade={"persist", "remove"})
+     * @Groups({"event:read", "event:post"})
      * @Assert\Valid(groups={"postValidation"})
      * @ApiSubresource(maxDepth=1)
      */
@@ -108,30 +108,32 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\ManyToOne(targetEntity="App\Entity\Place", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid(groups={"Default"})
-     * @Groups({"read_event", "write_event", "read_user"})
+     * @Groups({"event:read", "event:write", "user:read:event", "invitation:read:event"})
      */
     private $place;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="event", cascade={"remove"})
-     * @Groups({"read_event"})
+     * @Groups({"event:read"})
      * @ApiSubresource(maxDepth=1)
      */
     private $comments;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read_event"})
+     * @Groups({"event:read", "invitation:read:event"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $updatedAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $deletedAt;
 

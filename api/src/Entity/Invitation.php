@@ -29,19 +29,25 @@ use App\Api\Filter\ExpiredInvitationFilter;
  *      collectionOperations={"get", "post"={
  *          "defaults"={"confirmed"=false}
  *      }},
- *      itemOperations={"get","put","delete"},
+ *      itemOperations={
+ *          "get",
+ *          "put"={
+ *              "denormalization_context"={"groups"={"invitation:put"}}
+ *          },
+ *          "delete"
+ *      },
  *      attributes={
- *          "normalization_context"={"groups"={"read_invitation"}},
- *          "denormalization_context"={"groups"={"write_invitation"}}
+ *          "normalization_context"={"groups"={"invitation:read", "invitation:read:event", "invitation:read:user"}},
+ *          "denormalization_context"={"groups"={"invitation:write"}}
  *     },
  *     subresourceOperations={
  *          "api_events_participants_get_subresource"={
  *              "method"="get",
- *              "normalization_context"={"groups"={"read_event"}}
+ *              "normalization_context"={"groups"={"event:read:invitation"}}
  *          },
  *          "api_users_invitations_get_subresource"={
  *              "method"="get",
- *              "normalization_context"={"groups"={"read_user_invitation"}}
+ *              "normalization_context"={"groups"={"user:read:invitation", "user:read:event"}}
  *          }
  *     },
  * )
@@ -62,51 +68,53 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read_invitation", "read_event", "read_user"})
+     * @Groups({"invitation:read", "user:read:invitation", "event:read:invitation", "user:read:invitation"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="participants")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_invitation", "write_invitation", "read_user"})
+     * @Groups({"invitation:read", "user:read:invitation", "invitation:write", "user:read:invitation"})
      */
     private $event;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="invitations")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_invitation", "write_invitation", "post_event", "read_event"})
+     * @Groups({"invitation:read", "invitation:write", "event:post", "event:read:invitation"})
      * @Assert\NotBlank
      */
     private $recipient;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"read_invitation", "read_event", "read_user"})
+     * @Groups({"invitation:read", "invitation:put", "user:read:invitation", "event:read:invitation"})
      */
     private $confirmed;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read_invitation", "write_invitation", "post_event", "read_event", "read_user"})
+     * @Groups({"invitation:read", "user:read:invitation", "invitation:write", "event:post", "event:read:invitation", "user:read:invitation"})
      * @Assert\GreaterThan("today")
      */
     private $expireAt;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read_invitation", "read_event", "read_user"})
+     * @Groups({"invitation:read", "user:read:invitation", "event:read:invitation", "user:read:invitation"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $updatedAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $deletedAt;
 
@@ -206,7 +214,7 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     }
 
     /**
-     * @Groups({"read_invitation"})
+     * @Groups({"invitation:read"})
      */
     public function isExpired()
     {

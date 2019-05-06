@@ -49,35 +49,35 @@ class Place implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "read_event", "write_place", "write_event"})
+     * @Groups({"read", "read_event", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "read_event", "write_place", "write_event"})
+     * @Groups({"read", "read_event", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $streetNumber;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "read_event", "write_place", "write_event"})
+     * @Groups({"read", "read_event", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "read_event", "write_place", "write_event"})
+     * @Groups({"read", "read_event", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $streetName;
 
     /**
      * @ORM\Column(type="string", length=16)
-     * @Groups({"read", "read_event", "write_place", "write_event"})
+     * @Groups({"read", "read_event", "write_place", "event:write"})
      * @Assert\NotBlank
      * @Assert\Length(
      *     min=3,
@@ -88,7 +88,7 @@ class Place implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "read_event", "write_place", "write_event"})
+     * @Groups({"read", "read_event", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $country;
@@ -101,11 +101,13 @@ class Place implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $updatedAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"admin:user:read"})
      */
     private $deletedAt;
 
