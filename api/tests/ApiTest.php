@@ -7,13 +7,97 @@ namespace App\Tests;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiTest extends WebTestCase
 {
 
     /** @var Client */
     protected $client;
+
+
+
+    /**
+     * Test Comment
+     */
+    public function testRetrieveCommentList(): void
+    {
+        // Get first event
+        $response = $this->authenticatedRequest('GET', '/api/events?itemsPerPage=1');
+        $json = json_decode($response->getContent(), true);
+        $firstEvent = $json['hydra:member'][0];
+
+        $response = $this->authenticatedRequest('GET', '/api/events/'.$firstEvent['id'].'/comments');
+        $json = json_decode($response->getContent(), true);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+
+        $this->assertArrayHasKey('hydra:totalItems', $json);
+        $this->assertGreaterThan(0, $json['hydra:totalItems']);
+
+        $this->assertArrayHasKey('hydra:member', $json);
+        $this->assertGreaterThan(0, $json['hydra:member']);
+
+        // Test item's structure
+        $member = $json['hydra:member'][0];
+        $this->assertArrayHasKey('@id', $member);
+        $this->assertArrayHasKey('id', $member);
+        $this->assertArrayHasKey('author', $member);
+        $this->assertArrayHasKey('content', $member);
+        $this->assertArrayHasKey('rate', $member);
+        $this->assertArrayHasKey('createdAt', $member);
+
+        // Author mus be embedded
+        $this->assertInternalType('array', $member['author']);
+        $this->assertArrayHasKey('@id', $member['author']);
+        $this->assertArrayHasKey('id', $member['author']);
+        $this->assertArrayHasKey('username', $member['author']);
+        $this->assertArrayHasKey('email', $member['author']);
+        $this->assertArrayHasKey('avatarUrl', $member['author']);
+        $this->assertArrayNotHasKey('invitations', $member['author']);
+        $this->assertArrayNotHasKey('comments', $member['author']);
+    }
+
+
+    /**
+     * Test Comment
+     */
+    public function testRetrieveCommentItem(): void
+    {
+        // Get first event
+        $response = $this->authenticatedRequest('GET', '/api/events?itemsPerPage=1');
+        $json = json_decode($response->getContent(), true);
+        $firstEvent = $json['hydra:member'][0];
+
+        $response = $this->authenticatedRequest('GET', '/api/events/'.$firstEvent['id'].'/comments?itemsPerPage=1');
+        $json = json_decode($response->getContent(), true);
+        $data = $json['hydra:member'][0];
+
+        $response = $this->authenticatedRequest('GET', $data['@id']);
+        $json = json_decode($response->getContent(), true);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+
+
+        // Test item's structure
+        $this->assertArrayHasKey('@id', $json);
+        $this->assertArrayHasKey('id', $json);
+        $this->assertArrayHasKey('author', $json);
+        $this->assertArrayHasKey('content', $json);
+        $this->assertArrayHasKey('rate', $json);
+        $this->assertArrayHasKey('createdAt', $json);
+
+        // Author mus be embedded
+        $this->assertInternalType('array', $json['author']);
+        $this->assertArrayHasKey('@id', $json['author']);
+        $this->assertArrayHasKey('id', $json['author']);
+        $this->assertArrayHasKey('username', $json['author']);
+        $this->assertArrayHasKey('email', $json['author']);
+        $this->assertArrayHasKey('avatarUrl', $json['author']);
+        $this->assertArrayNotHasKey('invitations', $json['author']);
+        $this->assertArrayNotHasKey('comments', $json['author']);
+    }
 
     /**
      * Test Event
@@ -30,7 +114,7 @@ class ApiTest extends WebTestCase
         $this->assertEquals(500, $json['hydra:totalItems']);
 
         $this->assertArrayHasKey('hydra:member', $json);
-        $this->assertCount(500, $json['hydra:member']);
+        $this->assertCount(30, $json['hydra:member']);
 
         // Test item's structure
         $member = $json['hydra:member'][0];
@@ -55,23 +139,151 @@ class ApiTest extends WebTestCase
         $this->assertArrayHasKey('@id', $member['organizer']);
         $this->assertArrayHasKey('username', $member['organizer']);
 
-        // recipient embedded
+        // Participants and comment list must be array of @id
         $this->assertInternalType('array', $member['participants']);
-
         $this->assertInternalType('array', $member['comments']);
 
-    }
+        foreach ($member['participants'] as $participant) {
+            $this->assertInternalType('string', $participant);
+        }
 
+        foreach ($member['comments'] as $comment) {
+            $this->assertInternalType('string', $comment);
+        }
+
+        // Filter by organizer
+        $response = $this->authenticatedRequest('GET', '/api/events?organizer='.urlencode($member['organizer']['@id']));
+        $json = json_decode($response->getContent(), true);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+
+        $this->assertArrayHasKey('hydra:totalItems', $json);
+        $this->assertGreaterThan(0, $json['hydra:totalItems']);
+
+        $this->assertArrayHasKey('hydra:member', $json);
+        $this->assertGreaterThan(0, $json['hydra:member']);
+
+        foreach ($json["hydra:member"] as $item) {
+            $this->assertEquals($member['organizer']['@id'], $item['organizer']['@id']);
+        }
+
+        // get passed events
+        $today = new \DateTime();
+        $todayStr = $today->format('Y-m-d H:i:s');
+
+        $response = $this->authenticatedRequest('GET', '/api/events?endAt%5Bstrictly_before%5D='.urlencode($todayStr));
+
+        $json = json_decode($response->getContent(), true);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+
+        // check that all events ended
+        foreach ($json["hydra:member"] as $item) {
+            $endAt = new \DateTime($item['endAt']);
+            $this->assertLessThanOrEqual($today->getTimestamp(), $endAt->getTimestamp());
+        }
+
+        // Get future events
+        $response = $this->authenticatedRequest('GET', '/api/events?startAt%5Bstrictly_after%5D='.urlencode($todayStr));
+        $json = json_decode($response->getContent(), true);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+
+        // check that all events ended
+        foreach ($json["hydra:member"] as $item) {
+            $endAt = new \DateTime($item['startAt']);
+            $this->assertGreaterThanOrEqual($today->getTimestamp(), $endAt->getTimestamp());
+        }
+    }
 
     /**
      * Test Event
      */
     public function testRetrieveEventItem(): void
     {
+        // get one element
+        $response = $this->authenticatedRequest('GET', '/api/events?itemsPerPage=1');
+        $json = json_decode($response->getContent(), true);
 
+        $data = $json['hydra:member'][0];
+
+        $response = $this->authenticatedRequest('GET', $data['@id']);
+        $json = json_decode($response->getContent(), true);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+
+        // Test item's structure
+        $this->assertArrayHasKey('@id', $json);
+        $this->assertArrayHasKey('id', $json);
+        $this->assertArrayHasKey('name', $json);
+        $this->assertArrayHasKey('description', $json);
+        $this->assertArrayHasKey('organizer', $json);
+        $this->assertArrayHasKey('startAt', $json);
+        $this->assertArrayHasKey('endAt', $json);
+        $this->assertArrayHasKey('participants', $json);
+        $this->assertArrayHasKey('place', $json);
+        $this->assertArrayHasKey('comments', $json);
+        $this->assertArrayHasKey('createdAt', $json);
+
+        // Shouldn't embed nor other private fields
+        $this->assertArrayNotHasKey('updatedAt', $json);
+        $this->assertArrayNotHasKey('deletedAt', $json);
+
+        // Organizer must be embedded
+        $this->assertInternalType('array', $json['organizer']);
+        $this->assertArrayHasKey('@id', $json['organizer']);
+        $this->assertArrayHasKey('username', $json['organizer']);
+
+        // Participants and comment list must be array of @id
+        $this->assertInternalType('array', $json['participants']);
+        $this->assertInternalType('array', $json['comments']);
+
+        foreach ($json['participants'] as $participant) {
+            $this->assertInternalType('string', $participant);
+        }
+
+        foreach ($json['comments'] as $comment) {
+            $this->assertInternalType('string', $comment);
+        }
     }
 
 
+    /**
+     * Test Event Participant list
+     */
+    public function testRetrieveEventParticipantList(): void
+    {
+        $response = $this->authenticatedRequest('GET', '/api/events?itemsPerPage=1');
+        $json = json_decode($response->getContent(), true);
+
+        $data = $json['hydra:member'][0];
+
+        $response = $this->authenticatedRequest('GET', '/api/events/'.$data['id'].'/participants');
+        $json = json_decode($response->getContent(), true);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+
+        $this->assertArrayHasKey('hydra:totalItems', $json);
+        $this->assertGreaterThan(0, $json['hydra:totalItems']);
+
+        $this->assertArrayHasKey('hydra:member', $json);
+        $this->assertGreaterThan(0, $json['hydra:member']);
+
+        // Test item's structure
+        $member = $json['hydra:member'][0];
+        $this->assertArrayHasKey('@id', $member);
+        $this->assertArrayHasKey('id', $member);
+        $this->assertArrayHasKey('recipient', $member);
+        $this->assertArrayHasKey('confirmed', $member);
+        $this->assertArrayHasKey('expireAt', $member);
+        $this->assertArrayHasKey('createdAt', $member);
+        $this->assertArrayHasKey('expired', $member);
+        $this->assertInternalType('array', $member['recipient']);
+    }
 
     /**
      * Test Invitation
@@ -111,6 +323,8 @@ class ApiTest extends WebTestCase
         $this->assertArrayHasKey('@id', $member['event']);
         $this->assertArrayHasKey('place', $member['event']);
         $this->assertInternalType('string', $member['event']['place']); // No event Place embedded
+        $this->assertArrayHasKey('organizer', $member['event']);
+        $this->assertInternalType('array', $member['event']['organizer']); // Organizer Place embedded
         $this->assertArrayNotHasKey('invitations', $member['event']); // No event invitations embedded
 
         // recipient embedded
@@ -140,7 +354,7 @@ class ApiTest extends WebTestCase
      */
     public function testRetrieveInvitationItem(): void
     {
-        $response = $this->authenticatedRequest('GET', '/api/invitation');
+        $response = $this->authenticatedRequest('GET', '/api/invitations?itemsPerPage=1');
         $json = json_decode($response->getContent(), true);
 
         $data = $json['hydra:member'][0];
@@ -152,34 +366,36 @@ class ApiTest extends WebTestCase
         $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
 
         // Test item's structure
-        $member = $json['hydra:member'][0];
-        $this->assertArrayHasKey('@id', $member);
-        $this->assertArrayHasKey('id', $member);
-        $this->assertArrayHasKey('event', $member);
-        $this->assertArrayHasKey('recipient', $member);
-        $this->assertArrayHasKey('confirmed', $member);
-        $this->assertArrayHasKey('expireAt', $member);
-        $this->assertArrayHasKey('createdAt', $member);
-        $this->assertArrayHasKey('expired', $member);
+        $this->assertArrayHasKey('@id', $json);
+        $this->assertArrayHasKey('id', $json);
+        $this->assertArrayHasKey('event', $json);
+        $this->assertArrayHasKey('recipient', $json);
+        $this->assertArrayHasKey('confirmed', $json);
+        $this->assertArrayHasKey('expireAt', $json);
+        $this->assertArrayHasKey('createdAt', $json);
+        $this->assertArrayHasKey('expired', $json);
 
         // Shouldn't embed event list nor other private fields
-        $this->assertArrayNotHasKey('events', $member);
-        $this->assertArrayNotHasKey('updatedAt', $member);
-        $this->assertArrayNotHasKey('deletedAt', $member);
+        $this->assertArrayNotHasKey('events', $json);
+        $this->assertArrayNotHasKey('updatedAt', $json);
+        $this->assertArrayNotHasKey('deletedAt', $json);
 
         // Event must be embedded
-        $this->assertInternalType('array', $member['event']);
-        $this->assertArrayHasKey('@id', $member['event']);
-        $this->assertArrayHasKey('place', $member['event']);
-        $this->assertInternalType('string', $member['event']['place']); // No event Place embedded
-        $this->assertArrayNotHasKey('invitations', $member['event']); // No event invitations embedded
+        $this->assertInternalType('array', $json['event']);
+        $this->assertArrayHasKey('@id', $json['event']);
+        $this->assertArrayHasKey('place', $json['event']);
+        $this->assertInternalType('string', $json['event']['place']); // No event Place embedded
+        $this->assertArrayHasKey('organizer', $json['event']);
+        $this->assertInternalType('array', $json['event']['organizer']); // Organizer Place embedded
+        $this->assertArrayNotHasKey('invitations', $json['event']); // No event invitations embedded
 
         // recipient embedded
-        $this->assertInternalType('array', $member['recipient']);
-        $this->assertArrayHasKey('@id', $member['recipient']);
-        $this->assertArrayHasKey('id', $member['recipient']);
-        $this->assertArrayHasKey('email', $member['recipient']);
-        $this->assertArrayNotHasKey('password', $member['recipient']); // No password
+        $this->assertInternalType('array', $json['recipient']);
+        $this->assertArrayHasKey('@id', $json['recipient']);
+        $this->assertArrayHasKey('id', $json['recipient']);
+        $this->assertArrayHasKey('email', $json['recipient']);
+        $this->assertArrayNotHasKey('password', $json['recipient']); // No password
+
 
         // Check not found user
         $response = $this->authenticatedRequest('GET', '/api/users/999999999');
@@ -240,7 +456,7 @@ class ApiTest extends WebTestCase
      */
     public function testRetrievePlaceItem(): void
     {
-        $response = $this->authenticatedRequest('GET', '/api/places');
+        $response = $this->authenticatedRequest('GET', '/api/places?itemsPerPage=1');
         $json = json_decode($response->getContent(), true);
 
         $userData = $json['hydra:member'][0];
@@ -420,9 +636,6 @@ class ApiTest extends WebTestCase
         $this->assertInternalType('string', $member['event']['place']);
 
     }
-
-
-
 
     /**
      * @param string $method
