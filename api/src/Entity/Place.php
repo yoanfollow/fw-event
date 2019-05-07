@@ -17,7 +17,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 /**
  * @ApiResource(
- *     normalizationContext={"groups"={"read", "read_event"}},
+ *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write_place"}},
  *     attributes={
  *          "pagination_client_items_per_page"=true,
@@ -50,41 +50,41 @@ class Place implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read", "read_event"})
+     * @Groups({"read", "event:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=175)
-     * @Groups({"read", "read_event", "write_place", "event:write"})
+     * @Groups({"read", "event:read", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "read_event", "write_place", "event:write"})
+     * @Groups({"read", "event:read", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $streetNumber;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "read_event", "write_place", "event:write"})
+     * @Groups({"read", "event:read", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "read_event", "write_place", "event:write"})
+     * @Groups({"read", "event:read", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $streetName;
 
     /**
      * @ORM\Column(type="string", length=16)
-     * @Groups({"read", "read_event", "write_place", "event:write"})
+     * @Groups({"read", "event:read", "write_place", "event:write"})
      * @Assert\NotBlank
      * @Assert\Length(
      *     min=3,
@@ -95,14 +95,14 @@ class Place implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "read_event", "write_place", "event:write"})
+     * @Groups({"read", "event:read", "write_place", "event:write"})
      * @Assert\NotBlank
      */
     private $country;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"read", "read_event"})
+     * @Groups({"read", "event:read"})
      */
     private $createdAt;
 

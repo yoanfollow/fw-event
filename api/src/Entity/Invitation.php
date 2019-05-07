@@ -29,18 +29,27 @@ use App\Api\Filter\ExpiredInvitationFilter;
  *     uniqueConstraints={@ORM\UniqueConstraint(name="uq_event_recipient_idx", columns={"event_id", "recipient_id"})}
  * )
  * @ApiResource(
- *      collectionOperations={"get", "post"={
- *          "defaults"={"confirmed"=false}
- *      }},
+ *      collectionOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"invitation:read", "invitation:read:event", "invitation:read:user"}},
+ *          },
+ *          "post"={
+ *              "defaults"={"confirmed"=false},
+ *              "normalization_context"={"groups"={"invitation:write"}},
+ *              "denormalization_context"={"groups"={"invitation:write"}}
+ *          }
+ *     },
  *      itemOperations={
- *          "get",
+ *          "get"={
+ *              "normalization_context"={"groups"={"invitation:read", "invitation:read:event", "invitation:read:user"}},
+ *          },
  *          "put"={
- *              "denormalization_context"={"groups"={"invitation:put"}}
+ *              "denormalization_context"={"groups"={"invitation:put", "invitation:write"}}
  *          },
  *          "delete"
  *      },
  *      attributes={
- *          "normalization_context"={"groups"={"invitation:read", "invitation:read:event", "invitation:read:user"}},
+ *          "normalization_context"={"groups"={"invitation:read"}},
  *          "denormalization_context"={"groups"={"invitation:write"}},
  *          "pagination_client_items_per_page"=true,
  *          "maximum_items_per_page"=100

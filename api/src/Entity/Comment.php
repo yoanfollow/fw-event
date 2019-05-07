@@ -28,9 +28,15 @@ use App\Validator\EventFinished;
  * )
  * @ApiResource(
  *     collectionOperations={"post"},
- *     itemOperations={"get","put","delete"},
+ *     itemOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"comment:read", "comment:read:user"}}
+ *          },
+ *          "put",
+ *          "delete"
+ *      },
  *     attributes={
- *          "normalization_context"={"groups"={"comment:read", "comment:read:user"}},
+ *          "normalization_context"={"groups"={"comment:read"}},
  *          "denormalization_context"={"groups"={"comment:post"}},
  *          "pagination_client_items_per_page"=true,
  *          "maximum_items_per_page"=100
