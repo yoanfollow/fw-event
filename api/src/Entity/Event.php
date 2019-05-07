@@ -40,7 +40,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *     },
  *      attributes={
  *          "normalization_context"={"groups"={"event:read", "event:read:user"}},
- *          "force_eager"=false
+ *          "force_eager"=false,
+ *          "pagination_client_items_per_page"=true,
+ *          "maximum_items_per_page"=100
  *      }
  * )
  * @ApiFilter(SearchFilter::class, properties={

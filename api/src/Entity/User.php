@@ -74,7 +74,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *          }
  *     },
  *     attributes={
- *         "normalization_context"={"groups"={"user:read"}}
+ *          "normalization_context"={"groups"={"user:read"}},
+ *          "pagination_client_items_per_page"=true,
+ *          "maximum_items_per_page"=100
  *     }
  * )
  * @ApiFilter(SearchFilter::class, properties={"id": "exact", "username": "partial", "email": "partial"})

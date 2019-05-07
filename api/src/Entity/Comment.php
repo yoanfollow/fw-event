@@ -26,8 +26,10 @@ use App\Validator\EventFinished;
  *     collectionOperations={"post"},
  *     itemOperations={"get","put","delete"},
  *     attributes={
- *          "denormalization_context"={"groups"={"comment:post"}}
  *          "normalization_context"={"groups"={"comment:read", "comment:read:user"}},
+ *          "denormalization_context"={"groups"={"comment:post"}},
+ *          "pagination_client_items_per_page"=true,
+ *          "maximum_items_per_page"=100
  *     },
  *     subresourceOperations={
  *          "api_events_comments_get_subresource"={

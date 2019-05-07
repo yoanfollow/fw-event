@@ -18,7 +18,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"read", "read_event"}},
- *     denormalizationContext={"groups"={"write_place"}}
+ *     denormalizationContext={"groups"={"write_place"}},
+ *     attributes={
+ *          "pagination_client_items_per_page"=true,
+ *          "maximum_items_per_page"=100
+ *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\PlaceRepository")
  * @UniqueEntity(

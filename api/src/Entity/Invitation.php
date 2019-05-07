@@ -38,7 +38,9 @@ use App\Api\Filter\ExpiredInvitationFilter;
  *      },
  *      attributes={
  *          "normalization_context"={"groups"={"invitation:read", "invitation:read:event", "invitation:read:user"}},
- *          "denormalization_context"={"groups"={"invitation:write"}}
+ *          "denormalization_context"={"groups"={"invitation:write"}},
+ *          "pagination_client_items_per_page"=true,
+ *          "maximum_items_per_page"=100
  *     },
  *     subresourceOperations={
  *          "api_events_participants_get_subresource"={
