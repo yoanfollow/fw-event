@@ -24,6 +24,17 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     errorPath="username",
  *     message="Username already used"
  * )
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     errorPath="email",
+ *     message="Email already used"
+ * )
+ * @ORM\Table(
+ *     uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="uq_username_idx", columns={"username"}),
+ *          @ORM\UniqueConstraint(name="uq_email_idx", columns={"email"})
+ *      }
+ * )
  * @ApiResource(
  *      collectionOperations={
  *          "get",
@@ -94,7 +105,7 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=175)
      * @Groups({"user:read", "user:put", "event:read:user", "comment:read:user", "invitation:read:user", "event:read:comment", "event:read:invitation"})
      * @Assert\NotBlank
      * @Assert\Email
@@ -116,7 +127,7 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
     private $roles;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=175)
      * @Groups({"user:read", "event:read:user", "comment:read:user", "invitation:read:user", "event:read:comment", "event:read:invitation"})
      * @Assert\NotBlank(message="Username cannot be blank")
      */

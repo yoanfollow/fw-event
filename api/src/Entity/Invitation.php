@@ -25,6 +25,9 @@ use App\Api\Filter\ExpiredInvitationFilter;
  *     errorPath="recipient",
  *     message="User is already invited to this event"
  * )
+ * @ORM\Table(
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="uq_event_recipient_idx", columns={"event_id", "recipient_id"})}
+ * )
  * @ApiResource(
  *      collectionOperations={"get", "post"={
  *          "defaults"={"confirmed"=false}

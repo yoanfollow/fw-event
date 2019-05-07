@@ -22,6 +22,10 @@ use App\Validator\EventFinished;
  *     errorPath="author",
  *     message="User already left a comment for this event"
  * )
+ *
+ * @ORM\Table(
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="uq_author_event_idx", columns={"author_id", "event_id"})}
+ * )
  * @ApiResource(
  *     collectionOperations={"post"},
  *     itemOperations={"get","put","delete"},

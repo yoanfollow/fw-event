@@ -25,8 +25,8 @@ class AppFixtures extends Fixture
         $maxRandomPlaces = 20;
         $maxRandomUsers = 10;
         $maxRandomEventsPerUser = 50; // 10x50=500
-        $maxRandomInvitationsPerEvent = 10; // 10x50x10=5000
-        $maxRandomCommentPerEvent = 10; // For
+        $maxRandomInvitationsPerEvent = 5; // 5x50x10=5000
+        $maxRandomCommentPerEvent = 5;  // 5x50x10=5000
 
         // 2 Main users
         $user = new User();
@@ -78,7 +78,12 @@ class AppFixtures extends Fixture
             $firstName = $firstNames[rand(0, count($firstNames) - 1)];
             $lastName = $lastNames[rand(0, count($lastNames) - 1)];
             $userName = sprintf('%s.%s.%d', strtolower(str_replace(' ', '', $firstName)), strtolower(str_replace(' ', '', $lastName)), $i);
-            $email = sprintf('%s.%s@yopmail.com', strtolower(str_replace(' ', '', $firstName)), strtolower(str_replace(' ', '', $lastName)));
+            $email = sprintf(
+                '%s.%s+%d@yopmail.com',
+                strtolower(str_replace(' ', '', $firstName)),
+                strtolower(str_replace(' ', '', $lastName)),
+                $i
+            );
 
             $user = new User();
             $user
@@ -141,17 +146,24 @@ class AppFixtures extends Fixture
                 // Create random invitation.
                 // Add invited user key in a excluded keys list.
                 // Prevent current user from receiver list by adding key in exclude list.
-                $excludeUsersKeys = [$userKey];
+                $randomUsers = $users;
+                unset($randomUsers[$userKey]);
 
-                // Create 10 random invitations per events (5000)
+                // Create 5 random invitations per events (5000)
                 for ($inviteKey = 0; $inviteKey < $maxRandomInvitationsPerEvent; $inviteKey++) {
-                    while(in_array(($receiverKey = rand(0, count($users) - 1)), [$excludeUsersKeys]));
-                    $excludeUsersKeys[] = $receiverKey;
+                    // Randomly pick user, remove it from array to always pick a new user
+                    $randomUserKey = array_rand($randomUsers);
+                    $userToInvite = $randomUsers[$randomUserKey];
+                    unset($randomUsers[$randomUserKey]);
+
+                    if (count($randomUsers) === 0) {
+                        throw new \Exception('Not enough user for invitation creation loop');
+                    }
 
                     $invitation = new Invitation();
                     $invitation
                         ->setEvent($event)
-                        ->setRecipient($users[$receiverKey])
+                        ->setRecipient($userToInvite)
                         ->setConfirmed(rand(0, 1) !== 0) // randomly set state confirmed
                         ;
 
@@ -167,7 +179,6 @@ class AppFixtures extends Fixture
                 }
             }
         }
-
 
         $commentContent = [
             'I would prefer a date with my mother in law',
@@ -187,21 +198,34 @@ class AppFixtures extends Fixture
 
         // Add 10 comments per event (2000 comments)
         foreach ($finishedEvents as $event) {
-            // Create 10 random comment per events (5000).
-            // Add user key who commented in a excluded keys list.
-            // Prevent organizer user to comment his own event by adding key in exclude list.
-            $excludeUsersKeys = [$event->getOrganizer()->getId()];
+            // Create 5 random comment per events (2500).
+            // Copy user list to pick random user in it
+            $randomUsers = $users;
             for ($commentKey = 0; $commentKey < $maxRandomCommentPerEvent; $commentKey++) {
-                while (in_array(($authorKey = rand(0, count($users) - 1)), [$excludeUsersKeys]));
 
-                // Avoid double comment for same user
-                $excludeUsersKeys[] = $users[$authorKey];
+                // Randomly pick user, remove it from array to always pick a new user.
+                // If picked user is the author of the event, don't use it
+                $continuePick = true;
+                while (true === $continuePick) {
+                    if (count($randomUsers) === 0) {
+                        throw new \Exception('Not enough user for comment creation loop');
+                    }
+
+                    $randomUserKey = array_rand($randomUsers);
+                    $author = $randomUsers[$randomUserKey];
+                    unset($randomUsers[$randomUserKey]);
+
+                    // Check username (because there is no id yet)
+                    if ($author->getUsername() !== $event->getOrganizer()->getUsername()) {
+                        $continuePick = false;
+                    }
+                }
 
                 $note = rand(1, 5);
                 $comment = new Comment();
                 $comment
                     ->setEvent($event)
-                    ->setAuthor($users[$authorKey])
+                    ->setAuthor($author)
                     ->setContent($commentContent[$note - 1])
                     ->setRate($note)
                 ;
@@ -226,11 +250,11 @@ class AppFixtures extends Fixture
 
             $manager->persist($user);
 
-            // 10 invitation per users (70 more in total)
-            for ($i = 0; $i < 10; $i++) {
+            // 5 invitations per users (35 more in total)
+            for ($i = 0; $i < 5; $i++) {
                 $invitation = new Invitation();
                 $invitation
-                    ->setEvent($events[0])
+                    ->setEvent($events[$i])
                     ->setRecipient($user)
                     ->setConfirmed(rand(0, 1) !== 0)
                 ;
@@ -238,11 +262,11 @@ class AppFixtures extends Fixture
                 $invitations[] = $invitation;
             }
 
-            // 10 comment per users (70 more in total)
-            for ($i = 0; $i < 10; $i++) {
+            // 5 comments per users (35 more in total)
+            for ($i = 0; $i < 5; $i++) {
                 $comment = new Comment();
                 $comment
-                    ->setEvent($finishedEvents[0])
+                    ->setEvent($finishedEvents[$i])
                     ->setAuthor($user)
                     ->setContent('Great')
                     ->setRate(4)

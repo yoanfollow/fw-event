@@ -297,7 +297,7 @@ class ApiTest extends WebTestCase
         $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
 
         $this->assertArrayHasKey('hydra:totalItems', $json);
-        $this->assertEquals(5070, $json['hydra:totalItems']);
+        $this->assertGreaterThan(30, $json['hydra:totalItems']);
 
         $this->assertArrayHasKey('hydra:member', $json);
         $this->assertCount(30, $json['hydra:member']);
@@ -611,10 +611,10 @@ class ApiTest extends WebTestCase
         $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
 
         $this->assertArrayHasKey('hydra:totalItems', $json);
-        $this->assertEquals(10, $json['hydra:totalItems']);
+        $this->assertEquals(5, $json['hydra:totalItems']);
 
         $this->assertArrayHasKey('hydra:member', $json);
-        $this->assertCount(10, $json['hydra:member']);
+        $this->assertCount(5, $json['hydra:member']);
 
         $member = $json['hydra:member'][0];
 

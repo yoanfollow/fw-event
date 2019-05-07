@@ -30,6 +30,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *     errorPath="name",
  *     message="A place {{ value }} already exists"
  * )
+ * @ORM\Table(
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="uq_name_idx", columns={"name"})}
+ * )
  * @ApiFilter(SearchFilter::class, properties={
  *     "id": "exact",
  *     "name": "partial",
@@ -52,7 +55,7 @@ class Place implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=175)
      * @Groups({"read", "read_event", "write_place", "event:write"})
      * @Assert\NotBlank
      */
