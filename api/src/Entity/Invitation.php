@@ -214,7 +214,7 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     }
 
     /**
-     * @Groups({"invitation:read"})
+     * @Groups({"invitation:read", "event:read:invitation"})
      */
     public function isExpired()
     {

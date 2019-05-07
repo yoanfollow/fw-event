@@ -87,13 +87,13 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"user:read", "event:read:user", "invitation:read:user"})
+     * @Groups({"user:read", "event:read:user", "comment:read:user", "invitation:read:user", "event:read:comment", "event:read:invitation"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"user:read", "user:put", "event:read:user", "invitation:read:user"})
+     * @Groups({"user:read", "user:put", "event:read:user", "comment:read:user", "invitation:read:user", "event:read:comment", "event:read:invitation"})
      * @Assert\NotBlank
      * @Assert\Email
      */
@@ -109,26 +109,26 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
     /**
      * @var array
      * @ORM\Column(type="array")
-     * @Groups({"user:read", "invitation:read:user"})
+     * @Groups({"user:read"})
      */
     private $roles;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"user:read", "event:read:user", "invitation:read:user"})
+     * @Groups({"user:read", "event:read:user", "comment:read:user", "invitation:read:user", "event:read:comment", "event:read:invitation"})
      * @Assert\NotBlank(message="Username cannot be blank")
      */
     private $username;
 
     /**
-     * @Groups({"user:read", "user:put", "event:read:user", "invitation:read:user"})
+     * @Groups({"user:read", "user:put", "event:read:user", "comment:read:user", "invitation:read:user", "event:read:comment", "event:read:invitation"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Media")
      */
     private $avatar;
 
     /**
      * @var string $avatarUrl
-     * @Groups({"user:read", "invitation:read:user"})
+     * @Groups({"user:read", "comment:read:user", "invitation:read:user", "event:read:comment", "event:read:invitation"})
      */
     private $avatarUrl;
 

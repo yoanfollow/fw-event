@@ -39,7 +39,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *          }
  *     },
  *      attributes={
- *          "normalization_context"={"groups"={"event:read"}},
+ *          "normalization_context"={"groups"={"event:read", "event:read:user"}},
  *          "force_eager"=false
  *      }
  * )
@@ -59,7 +59,7 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"event:read", "user:read:event"})
+     * @Groups({"event:read", "user:read:event", "invitation:read:event"})
      */
     private $id;
 

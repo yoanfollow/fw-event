@@ -26,13 +26,13 @@ use App\Validator\EventFinished;
  *     collectionOperations={"post"},
  *     itemOperations={"get","put","delete"},
  *     attributes={
- *          "normalization_context"={"groups"={"comment:read"}},
  *          "denormalization_context"={"groups"={"comment:post"}}
+ *          "normalization_context"={"groups"={"comment:read", "comment:read:user"}},
  *     },
  *     subresourceOperations={
  *          "api_events_comments_get_subresource"={
  *              "method"="get",
- *              "normalization_context"={"groups"={"event:read"}}
+ *              "normalization_context"={"groups"={"event:read:comment"}}
  *          }
  *     }
  * )
