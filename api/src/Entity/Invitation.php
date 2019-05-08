@@ -16,6 +16,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Api\Filter\ExpiredInvitationFilter;
+use App\Validator\NotCurrentUser;
 
 
 /**
@@ -97,7 +98,7 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="invitations")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"invitation:read", "invitation:write", "event:post", "event:read:invitation"})
-     * @Assert\NotBlank
+     * @Assert\NotBlank()
      */
     private $recipient;
 

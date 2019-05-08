@@ -20,18 +20,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
  * @ApiResource(
- *      collectionOperations={
- *          "get",
- *          "post"={
- *              "denormalization_context"={"groups"={"event:post", "event:write"}},
- *              "validation_groups"={"Default", "postValidation"}
- *          }
- *     },
+ *      collectionOperations={"get", "post"},
  *      itemOperations={
  *          "get",
  *          "put"={
  *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getOrganizer() == user)",
- *              "denormalization_context"={"groups"={"event:write"}},
  *              "validation_groups"={"Default", "putValidation"}
  *          },
  *          "delete"={
@@ -40,6 +33,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *     },
  *      attributes={
  *          "normalization_context"={"groups"={"event:read", "event:read:user"}},
+ *          "denormalization_context"={"groups"={"event:write"}},
  *          "force_eager"=false,
  *          "pagination_client_items_per_page"=true,
  *          "maximum_items_per_page"=100
@@ -100,8 +94,7 @@ class Event implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invitation", mappedBy="event", orphanRemoval=true, cascade={"persist", "remove"})
-     * @Groups({"event:read", "event:post"})
-     * @Assert\Valid(groups={"postValidation"})
+     * @Groups({"event:read"})
      * @ApiSubresource(maxDepth=1)
      */
     private $participants;
