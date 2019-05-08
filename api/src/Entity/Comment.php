@@ -27,17 +27,25 @@ use App\Validator\EventFinished;
  *     uniqueConstraints={@ORM\UniqueConstraint(name="uq_author_event_idx", columns={"author_id", "event_id"})}
  * )
  * @ApiResource(
- *     collectionOperations={"post"},
+ *     collectionOperations={
+ *          "post"={
+ *              "denormalization_context"={"groups"={"comment:post"}},
+ *          }
+ *     },
  *     itemOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"comment:read", "comment:read:user"}}
  *          },
- *          "put",
- *          "delete"
+ *          "put"={
+ *              "denormalization_context"={"groups"={"comment:put"}},
+ *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getAuthor() == user)"
+ *          },
+ *          "delete"={
+ *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getAuthor() == user)"
+ *          }
  *      },
  *     attributes={
  *          "normalization_context"={"groups"={"comment:read"}},
- *          "denormalization_context"={"groups"={"comment:post"}},
  *          "pagination_client_items_per_page"=true,
  *          "maximum_items_per_page"=100
  *     },
@@ -77,7 +85,7 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"comment:read", "comment:post", "event:read:comment"})
+     * @Groups({"comment:read", "comment:post", "comment:put", "event:read:comment"})
      */
     private $content;
 
@@ -89,7 +97,7 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      *      minMessage = "Rate must at least {{ limit }}",
      *      maxMessage = "Rate cannot be greater than {{ limit }}"
      * )
-     * @Groups({"comment:read", "comment:post", "event:read:comment"})
+     * @Groups({"comment:read", "comment:post", "comment:put", "event:read:comment"})
      */
     private $rate;
 
