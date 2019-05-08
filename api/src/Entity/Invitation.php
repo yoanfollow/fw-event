@@ -16,7 +16,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Api\Filter\ExpiredInvitationFilter;
-use App\Validator\NotCurrentUser;
+use App\Validator\NotEventAuthor;
+use App\Action\SetInvitationConfirmationAction;
 
 
 /**
@@ -26,6 +27,7 @@ use App\Validator\NotCurrentUser;
  *     errorPath="recipient",
  *     message="User is already invited to this event"
  * )
+ * @NotEventAuthor
  * @ORM\Table(
  *     uniqueConstraints={@ORM\UniqueConstraint(name="uq_event_recipient_idx", columns={"event_id", "recipient_id"})}
  * )
@@ -36,8 +38,8 @@ use App\Validator\NotCurrentUser;
  *          },
  *          "post"={
  *              "defaults"={"confirmed"=false},
- *              "normalization_context"={"groups"={"invitation:write"}},
- *              "denormalization_context"={"groups"={"invitation:write"}}
+ *              "denormalization_context"={"groups"={"invitation:post"}},
+ *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEvent().getOrganizer() == user)"
  *          }
  *     },
  *      itemOperations={
@@ -45,13 +47,31 @@ use App\Validator\NotCurrentUser;
  *              "normalization_context"={"groups"={"invitation:read", "invitation:read:event", "invitation:read:user"}},
  *          },
  *          "put"={
- *              "denormalization_context"={"groups"={"invitation:put", "invitation:write"}}
+ *              "denormalization_context"={"groups"={"invitation:put"}},
+ *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEvent().getOrganizer() == user)"
+ *          },
+ *          "confirm"={
+ *              "method"="PUT",
+ *              "path"="/invitation/{id}/confirm",
+ *              "controller"=SetInvitationConfirmationAction::class,
+ *              "denormalization_context"={"groups"={"invitation:confirm"}},
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                      {
+ *                          "name"="id",
+ *                          "in"="path",
+ *                          "schema"={"type"="integer"},
+ *                          "required"=true
+ *                      }
+ *                  },
+ *                  "consumes"={"application/json"},
+ *                  "produces"={"application/json"}
+ *              }
  *          },
  *          "delete"
  *      },
  *      attributes={
  *          "normalization_context"={"groups"={"invitation:read"}},
- *          "denormalization_context"={"groups"={"invitation:write"}},
  *          "pagination_client_items_per_page"=true,
  *          "maximum_items_per_page"=100
  *     },
@@ -90,27 +110,27 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="participants")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"invitation:read", "user:read:invitation", "invitation:write", "user:read:invitation"})
+     * @Groups({"invitation:read", "user:read:invitation", "invitation:post", "invitation:put", "user:read:invitation"})
      */
     private $event;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="invitations")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"invitation:read", "invitation:write", "event:post", "event:read:invitation"})
+     * @Groups({"invitation:read", "invitation:post", "invitation:put", "event:read:invitation"})
      * @Assert\NotBlank()
      */
     private $recipient;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"invitation:read", "invitation:put", "user:read:invitation", "event:read:invitation"})
+     * @Groups({"invitation:read", "invitation:put", "invitation:confirm", "user:read:invitation", "event:read:invitation"})
      */
     private $confirmed;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"invitation:read", "user:read:invitation", "invitation:write", "event:post", "event:read:invitation", "user:read:invitation"})
+     * @Groups({"invitation:read", "user:read:invitation", "invitation:post", "invitation:put", "event:read:invitation", "user:read:invitation"})
      * @Assert\GreaterThan("today")
      */
     private $expireAt;
