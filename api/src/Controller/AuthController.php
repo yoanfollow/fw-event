@@ -33,7 +33,6 @@ class AuthController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-
         if (!$form->isValid()) {
             return new JsonResponse([
                 'success' => false,
@@ -54,7 +53,8 @@ class AuthController extends AbstractController
 
         return new JsonResponse([
             'success' => true,
-        ], Response::HTTP_OK);
+            'id' => $user->getId(),
+        ], Response::HTTP_CREATED);
     }
 
 
