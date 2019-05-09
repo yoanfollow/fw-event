@@ -9,6 +9,7 @@ use App\Entity\Invitation;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class SetInvitationConfirmationAction
@@ -22,14 +23,19 @@ class SetInvitationConfirmationAction
     /** @var TokenStorageInterface $tokenStorage */
     private $tokenStorage;
 
+    /** @var AuthorizationCheckerInterface $authorizationChecker */
+    private $authorizationChecker;
+
 
     public function __construct(
         ManagerRegistry $managerRegistry,
         ResourceMetadataFactoryInterface $resourceMetadataFactory,
+        AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->resourceMetadataFactory = $resourceMetadataFactory;
+        $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
     }
 
@@ -48,7 +54,7 @@ class SetInvitationConfirmationAction
         }
 
         $currentUser = $this->tokenStorage->getToken()->getUser();
-        if ($data->getRecipient()->getId() !== $currentUser->getId()) {
+        if ($data->getRecipient()->getId() !== $currentUser->getId() && !$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException(sprintf('Access denied'));
         }
 
