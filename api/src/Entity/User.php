@@ -81,7 +81,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *          "get",
  *          "put"={
  *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object == user)",
- *              "denormalization_context"={"groups"={"user:put"}}
+ *              "denormalization_context"={"groups"={"user:put"}},
+ *              "validation_groups"={"validate:user:put", "Default"}
  *          }
  *     },
  *     attributes={
@@ -115,7 +116,7 @@ class User implements UserInterface, AutoCreatedAtInterface, AutoUpdatedAtInterf
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"user:put"})
-     * @Assert\NotBlank(message="Password cannot be blank")
+     * @Assert\NotBlank(message="Password cannot be blank", groups={"validate:user:put"})
      */
     private $password;
 
