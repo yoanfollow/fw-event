@@ -52,7 +52,7 @@ use App\Action\SetInvitationConfirmationAction;
  *          },
  *          "confirm"={
  *              "method"="PUT",
- *              "path"="/invitation/{id}/confirm",
+ *              "path"="/invitations/{id}/confirm",
  *              "controller"=SetInvitationConfirmationAction::class,
  *              "denormalization_context"={"groups"={"invitation:confirm"}},
  *              "swagger_context"={
@@ -110,14 +110,14 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="participants")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"invitation:read", "user:read:invitation", "invitation:post", "invitation:put", "user:read:invitation"})
+     * @Groups({"invitation:read", "user:read:invitation", "invitation:post", "user:read:invitation"})
      */
     private $event;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="invitations")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"invitation:read", "invitation:post", "invitation:put", "event:read:invitation"})
+     * @Groups({"invitation:read", "invitation:post", "event:read:invitation"})
      * @Assert\NotBlank()
      */
     private $recipient;
