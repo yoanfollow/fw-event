@@ -27,8 +27,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     errorPath="recipient",
  *     message="User is already invited to this event"
  * )
- * @NotEventAuthor
  * @Assert\Callback(callback="validate", groups={"validation:invitation:confirm"})
+ * @Assert\Callback(callback="validateAuthor", groups={"Default"})
  * @ORM\Table(
  *     uniqueConstraints={@ORM\UniqueConstraint(name="uq_event_recipient_idx", columns={"event_id", "recipient_id"})}
  * )
@@ -262,6 +262,20 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
             $context
                 ->buildViolation('Your invitation has expired')
                 ->atPath('confirmed')
+                ->addViolation()
+            ;
+        }
+    }
+
+    /**
+     * @param ExecutionContextInterface $context
+     */
+    public function validateAuthor(ExecutionContextInterface $context)
+    {
+        if ($this->getRecipient()->getId() === $this->getEvent()->getOrganizer()->getId()) {
+            $context
+                ->buildViolation('Cannot invite author of the event')
+                ->atPath('recipient')
                 ->addViolation()
             ;
         }

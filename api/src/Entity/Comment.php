@@ -6,13 +6,14 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use App\EntityHook\AutoCreatedAtInterface;
 use App\EntityHook\AutoUpdatedAtInterface;
+use App\Helpers\DateHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\Validator\EventFinished;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 
 /**
@@ -22,7 +23,7 @@ use App\Validator\EventFinished;
  *     errorPath="author",
  *     message="User already left a comment for this event"
  * )
- *
+ * @Assert\Callback(callback="validate", groups={"validation:comment:post"})
  * @ORM\Table(
  *     uniqueConstraints={@ORM\UniqueConstraint(name="uq_author_event_idx", columns={"author_id", "event_id"})}
  * )
@@ -30,6 +31,7 @@ use App\Validator\EventFinished;
  *     collectionOperations={
  *          "post"={
  *              "denormalization_context"={"groups"={"comment:post"}},
+ *              "validation_groups"={"validation:comment:post", "Default"},
  *          }
  *     },
  *     itemOperations={
@@ -106,7 +108,6 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"comment:read", "comment:post"})
      * @Assert\NotBlank
-     * @EventFinished(message="Event must be finished to post a comment")
      */
     private $event;
 
@@ -215,6 +216,34 @@ class Comment implements AutoCreatedAtInterface, AutoUpdatedAtInterface
         $this->deletedAt = $deletedAt;
 
         return $this;
+    }
+
+    /**
+     * @param ExecutionContextInterface $context
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        // Author was invited and invitation was confirmed
+        $authorIsInvited = $this->getEvent()->getParticipants()->exists(function($key, Invitation $invitation) {
+            return $this->getAuthor()->getId() === $invitation->getRecipient()->getId() && $invitation->getConfirmed();
+        });
+
+        if (!$authorIsInvited) {
+            $context
+                ->buildViolation('You were not invited to this event or did not confirmed.')
+                ->atPath('event')
+                ->addViolation()
+            ;
+        }
+
+        if ($this->getEvent()->getEndAt() >= DateHelper::getToday()) {
+            $context
+                ->buildViolation('This event is not finished')
+                ->atPath('event')
+                ->addViolation()
+            ;
+        }
+
     }
 
 }
