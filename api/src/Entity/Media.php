@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -44,6 +45,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     },
  * )
  * @Vich\Uploadable
+ * @Assert\Callback(callback="validate")
  */
 class Media
 {
@@ -80,5 +82,24 @@ class Media
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+
+    /**
+     * @param ExecutionContextInterface $context
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        if (! in_array($this->file->getMimeType(), array(
+            'image/jpeg',
+            'image/gif',
+            'image/png',
+        ))) {
+            $context
+                ->buildViolation('Wrong file type (jpg,gif,png)')
+                ->atPath('fileName')
+                ->addViolation()
+            ;
+        }
     }
 }
