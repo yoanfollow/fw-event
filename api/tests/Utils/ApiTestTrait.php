@@ -129,6 +129,32 @@ trait ApiTestTrait
     }
 
     /**
+     * @param string|null $eventAuthorUsername
+     * @return array
+     * @throws \Exception
+     */
+    protected function getFirstComment(?string $eventAuthorUsername = null) : array
+    {
+        $event = $this->getFirstEvent($eventAuthorUsername);
+        $response = $this->authenticatedRequest('GET', '/api/events/'.$event['id'].'/comments');
+        $json = json_decode($response->getContent(), true);
+        return $json['hydra:member'][0];
+    }
+
+    /**
+     * @param string|null $eventAuthorUsername
+     * @return array
+     * @throws \Exception
+     */
+    protected function getFirstInvitation(?string $eventAuthorUsername = null) : array
+    {
+        $event = $this->getFirstEvent($eventAuthorUsername);
+        $response = $this->authenticatedRequest('GET', '/api/events/'.$event['id'].'/participants');
+        $json = json_decode($response->getContent(), true);
+        return $json['hydra:member'][0];
+    }
+
+    /**
      * @param string|null $name
      * @return array
      */
