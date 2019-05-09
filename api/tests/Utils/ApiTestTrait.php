@@ -253,11 +253,5 @@ trait ApiTestTrait
         return $uploadFile;
     }
 
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->client = static::createClient();
-    }
 
 }
