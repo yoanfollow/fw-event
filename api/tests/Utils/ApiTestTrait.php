@@ -240,7 +240,7 @@ trait ApiTestTrait
 
         $newFileName = $fileNameRaw.md5('/data/avatars/jack'.time()).'.'.$fileExtension;
         $newFilePath = $cacheDir.'/'.$newFileName;
-        copy(__DIR__.'/data/avatars/'.$fileName, $newFilePath);
+        copy(__DIR__.'/../data/avatars/'.$fileName, $newFilePath);
 
         $uploadFile = new UploadedFile(
             $newFilePath,
@@ -252,4 +252,12 @@ trait ApiTestTrait
 
         return $uploadFile;
     }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->client = static::createClient();
+    }
+
 }
