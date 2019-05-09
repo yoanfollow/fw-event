@@ -4,17 +4,27 @@ services:
   api:
     build:
       context: ./api
-    environment:
-      - DATABASE_URL=mysql://noel:flantier@db:3306/follow
-      - DATABASE_TEST_URL=mysql://noel:flantier@db_test:3306/follow_test
     volumes:
       - ./api:/var/www/project/
+    depends_on:
+      - db
+    links:
+      - db
+    user: ${CURRENT_UID}
     networks:
       - common_network
+    environment:
+      DATABASE_URL: mysql://noel:flantier@db:3306/follow
+      DATABASE_TEST_URL: mysql://noel:flantier@db_test:3306/follow_test
+      WAIT_HOSTS: db:3306
 
   nginx:
     build:
       context: ./docker/nginx
+    depends_on:
+      - api
+    links:
+      - api
     volumes:
       - ./api:/var/www/project/
     ports:

@@ -27,11 +27,18 @@ RUN docker-php-ext-configure intl \
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 RUN composer global require hirak/prestissimo
 
+RUN apt-get install -y --no-install-recommends openssl
+
 WORKDIR /var/www/project/
 
-
+# Avoid permission issues
 RUN mkdir -p /.composer/cache
 RUN chmod 777 -R /.composer/cache
 RUN chmod 777 -R /var/www/project/var
 RUN chmod 777 -R /var/www/project/public/uploads
 
+# Script to wait for DB to be ready
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
+RUN chmod +x /wait
+
+CMD /wait && /var/www/project/run.sh
