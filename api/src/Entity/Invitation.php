@@ -39,6 +39,7 @@ use App\Action\SetInvitationConfirmationAction;
  *          "post"={
  *              "defaults"={"confirmed"=false},
  *              "denormalization_context"={"groups"={"invitation:post"}},
+ *              "validation_groups"={"validate:invitation:post", "Default"},
  *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getEvent().getOrganizer() == user)"
  *          }
  *     },
@@ -131,7 +132,7 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"invitation:read", "user:read:invitation", "invitation:post", "invitation:put", "event:read:invitation", "user:read:invitation"})
-     * @Assert\GreaterThan("today")
+     * @Assert\GreaterThan("today", groups={"validate:invitation:post"})
      */
     private $expireAt;
 
