@@ -7,9 +7,10 @@
 /public/uploads/
 !/public/uploads/.gitkeep
 /var/cache/*
-/var/logs/*
-/var/sessions/*
+/var/log/*
 !var/.gitkeep
+!var/cache/.gitkeep
+!var/log/.gitkeep
 
 /vendor/
 /.env
