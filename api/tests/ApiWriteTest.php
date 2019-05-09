@@ -297,16 +297,19 @@ class ApiWriteTest extends WebTestCase
 
         $this->assertEquals(200, $response->getStatusCode());
     }
-    
+
     public function testConfirmInvitation(): void
     {
         $event = $this->getFirstEvent();
         $user = $this->getOneUser('jquinson');
 
         // Invite current user as admin for access
+        $expireAt = new \DateTime();
+        $expireAt->add(New \DateInterval('P2D'));
         $response = $this->authenticatedRequest('POST', '/api/invitations', [
             'event' => $event['@id'],
             'recipient' => $user['@id'],
+            'expireAt' => $expireAt->format('Y-m-d H:i:s'),
         ], [], ['admin']);
 
         $invitationJson = json_decode($response->getContent(), true);
@@ -315,9 +318,7 @@ class ApiWriteTest extends WebTestCase
         // Confirm
         $response = $this->authenticatedRequest('PUT', '/api/invitations/'.$invitationJson['id'].'/confirm', [
             'confirmed' => true,
-        ], [
-            'content-type' => 'application/json',
-        ], ['jquinson']);
+        ], [], ['jquinson']);
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -326,6 +327,43 @@ class ApiWriteTest extends WebTestCase
         $json = json_decode($response->getContent(), true);
 
         $this->assertTrue($json['confirmed']);
+    }
+
+    public function testBadConfirmInvitation(): void
+    {
+        $event = $this->getFirstEvent();
+        $user = $this->getOneUser('jquinson');
+
+        // Create Invite current user. If it already exist it no important
+        $this->authenticatedRequest('POST', '/api/invitations', [
+            'event' => $event['@id'],
+            'recipient' => $user['@id'],
+        ], [], ['admin']);
+
+        $response = $this->authenticatedRequest(
+            'GET',
+            '/api/invitations?event='.urlencode($event['@id']).'&recipient='.urlencode($user['@id']),
+            [],
+            ['admin']
+        );
+
+        $json = json_decode($response->getContent(), true);
+        $invitationJson = $json['hydra:member'][0];
+
+        $expireAt = new \DateTime();
+        $expireAt->sub(New \DateInterval('P2D'));
+
+        // Expire invitation
+        $this->authenticatedRequest('PUT', $invitationJson['@id'], [
+            'expireAt' => $expireAt->format('Y-m-d H:i:s'),
+        ], [], ['admin']);
+
+        // Confirm
+        $response = $this->authenticatedRequest('PUT', '/api/invitations/'.$invitationJson['id'].'/confirm', [
+            'confirmed' => true,
+        ], [], ['jquinson']);
+
+        $this->assertEquals(400, $response->getStatusCode());
     }
 
     public function testDeleteInvitation(): void

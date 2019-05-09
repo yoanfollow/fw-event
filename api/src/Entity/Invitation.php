@@ -17,7 +17,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Api\Filter\ExpiredInvitationFilter;
 use App\Validator\NotEventAuthor;
-use App\Action\SetInvitationConfirmationAction;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 
 /**
@@ -28,6 +28,7 @@ use App\Action\SetInvitationConfirmationAction;
  *     message="User is already invited to this event"
  * )
  * @NotEventAuthor
+ * @Assert\Callback(callback="validate", groups={"validation:invitation:confirm"})
  * @ORM\Table(
  *     uniqueConstraints={@ORM\UniqueConstraint(name="uq_event_recipient_idx", columns={"event_id", "recipient_id"})}
  * )
@@ -54,20 +55,9 @@ use App\Action\SetInvitationConfirmationAction;
  *          "confirm"={
  *              "method"="PUT",
  *              "path"="/invitations/{id}/confirm",
- *              "controller"=SetInvitationConfirmationAction::class,
  *              "denormalization_context"={"groups"={"invitation:confirm"}},
- *              "swagger_context"={
- *                  "parameters"={
- *                      {
- *                          "name"="id",
- *                          "in"="path",
- *                          "schema"={"type"="integer"},
- *                          "required"=true
- *                      }
- *                  },
- *                  "consumes"={"application/json"},
- *                  "produces"={"application/json"}
- *              }
+ *              "validation_groups"={"validation:invitation:confirm", "Default"},
+ *              "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getRecipient() == user)"
  *          },
  *          "delete"
  *      },
@@ -125,7 +115,7 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"invitation:read", "invitation:put", "invitation:confirm", "user:read:invitation", "event:read:invitation"})
+     * @Groups({"invitation:read", "invitation:confirm", "user:read:invitation", "event:read:invitation"})
      */
     private $confirmed;
 
@@ -254,9 +244,26 @@ class Invitation implements AutoCreatedAtInterface, AutoUpdatedAtInterface
      */
     public function isExpired()
     {
-        if (!$this->expireAt) {
+        if ($this->expireAt instanceof \DateTime) {
             return DateHelper::getToday() > $this->expireAt;
         }
         return DateHelper::getToday() > $this->getEvent()->getEndAt();
+    }
+
+
+
+
+    /**
+     * @param ExecutionContextInterface $context
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        if ($this->confirmed && $this->isExpired()) {
+            $context
+                ->buildViolation('Your invitation has expired')
+                ->atPath('confirmed')
+                ->addViolation()
+            ;
+        }
     }
 }

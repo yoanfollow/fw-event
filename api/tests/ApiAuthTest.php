@@ -131,28 +131,28 @@ class ApiAuthTest extends WebTestCase
     {
         $invitation = $this->getFirstInvitation();
 
+        $expireAt = new \DateTime();
+        $expireAt->add(New \DateInterval('P2D'));
+        $this->authenticatedRequest('PUT', $invitation['@id'], [
+            'expireAt' => $expireAt->format('Y-m-d H:i:s'),
+        ], [], ['admin']);
+
         // Forbidden (not organizer)
         $response = $this->authenticatedRequest('PUT', '/api/invitations/'.$invitation['id'].'/confirm', [
             'confirmed' => true,
-        ], [
-            'content-type' => 'application/json',
-        ], ['jquinson']);
+        ], [], ['jquinson']);
         $this->assertEquals(403, $response->getStatusCode());
 
         // Ok
         $response = $this->authenticatedRequest('PUT', '/api/invitations/'.$invitation['id'].'/confirm', [
             'confirmed' => true,
-        ], [
-            'content-type' => 'application/json',
-        ], [$invitation['recipient']['username']]);
+        ], [], [$invitation['recipient']['username']]);
         $this->assertEquals(200, $response->getStatusCode());
 
         // Ok
         $response = $this->authenticatedRequest('PUT', '/api/invitations/'.$invitation['id'].'/confirm', [
             'confirmed' => true,
-        ], [
-            'content-type' => 'application/json',
-        ], ['admin']);
+        ], [], ['admin']);
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -217,5 +217,11 @@ class ApiAuthTest extends WebTestCase
     }
 
 
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->client = static::createClient();
+    }
 
 }
