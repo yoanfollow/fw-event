@@ -12,85 +12,6 @@ class ApiWriteTest extends WebTestCase
 
     use ApiTestTrait;
 
-    public function testPostComment(): void
-    {
-        $eventData = $this->getFirstEvent();
-
-        $response = $this->authenticatedRequest('POST', '/api/comments', [
-            'content' => 'Ceci est très swaggué',
-            'rate' => 4,
-            'event' => $eventData['@id'],
-        ], [], ['jquinson']);
-
-        $json = json_decode($response->getContent(), true);
-        $this->assertEquals(201, $response->getStatusCode());
-
-        // Test item's structure
-        foreach (['@id', 'id', 'author', 'content', 'rate', 'createdAt'] as $key) {
-            $this->assertArrayHasKey($key, $json);
-        }
-        $this->assertInternalType('string', $json['author']);
-        $this->assertEquals('Ceci est très swaggué', $json['content']);
-    }
-
-    public function testPostCommentDuplicate(): void
-    {
-        $eventData = $this->getFirstEvent();
-
-        $response = $this->authenticatedRequest('POST', '/api/comments', [
-            'content' => 'Comment duplicated',
-            'rate' => 4,
-            'event' => $eventData['@id'],
-        ], [], ['jquinson']);
-
-        $json = json_decode($response->getContent(), true);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('ConstraintViolationList', $json['@type']);
-    }
-
-    public function testPutComment(): void
-    {
-        $eventData = $this->getFirstEvent();
-
-        // Get last created comment
-        $response = $this->authenticatedRequest('GET', '/api/events/'.$eventData['id'].'/comments?order%5Bid%5D=desc', [], [], ['jquinson']);
-        $json = json_decode($response->getContent(), true);
-        $member = $json['hydra:member'][0];
-
-        $response = $this->authenticatedRequest(
-            'PUT',
-            $member['@id'],
-            [
-                'content' => 'Ouais en fait bof',
-                'rate' => 2,
-            ], [], ['jquinson']
-        );
-
-        $json = json_decode($response->getContent(), true);
-        $this->assertEquals(200, $response->getStatusCode());
-
-        // Test item's structure
-        foreach (['@id', 'author', 'content', 'rate', 'createdAt'] as $key) {
-            $this->assertArrayHasKey($key, $json);
-        }
-        $this->assertInternalType('string', $json['author']);
-        $this->assertEquals('Ouais en fait bof', $json['content']);
-        $this->assertEquals(2, $json['rate']);
-    }
-
-    public function testDeleteComment(): void
-    {
-        $eventData = $this->getFirstEvent();
-
-        // Get last created comment
-        $response = $this->authenticatedRequest('GET', '/api/events/'.$eventData['id'].'/comments?order%5Bid%5D=desc', [], [], ['jquinson']);
-        $json = json_decode($response->getContent(), true);
-        $member = $json['hydra:member'][0];
-
-        $response = $this->authenticatedRequest('DELETE', $member['@id'], [], [], ['jquinson']);
-
-        $this->assertEquals(204, $response->getStatusCode());
-    }
 
 
     public function testPostEvent(): void
@@ -716,6 +637,166 @@ class ApiWriteTest extends WebTestCase
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('ConstraintViolationList', $json['@type']);
     }
+
+
+    public function testPostComment(): void
+    {
+        $eventData = $this->getFirstEvent();
+
+        $response = $this->authenticatedRequest('POST', '/api/comments', [
+            'content' => 'Ceci est très swaggué',
+            'rate' => 4,
+            'event' => $eventData['@id'],
+        ], [], ['jquinson']);
+
+        $json = json_decode($response->getContent(), true);
+        $this->assertEquals(201, $response->getStatusCode());
+
+        // Test item's structure
+        foreach (['@id', 'id', 'author', 'content', 'rate', 'createdAt'] as $key) {
+            $this->assertArrayHasKey($key, $json);
+        }
+        $this->assertInternalType('string', $json['author']);
+        $this->assertEquals('Ceci est très swaggué', $json['content']);
+    }
+
+
+    public function testPostCommentErrors(): void
+    {
+        $userJack = $this->getOneUser('jack.thedog.real');
+        $userFinn = $this->getOneUser('finn.thehuman.real');
+
+        // Get place with name "Amazing place 20"
+        $placeJson = $this->getOnePlace(urlencode('Amazing place 20'));
+        [$startAt, $endAt] = $this->getEventDate(true);
+
+        // Jack create event
+        $response = $this->authenticatedRequest('POST', '/api/events', [
+            "name" => "Party hard",
+            "description" => "Party hard with dancing bugs",
+            "startAt" => $startAt,
+            "endAt" => $endAt,
+            'place' => $placeJson['@id'],
+        ], [], [$userJack['username']]);
+
+
+        $eventJson = json_decode($response->getContent(), true);
+
+        // Jack invite finn
+        $response = $this->authenticatedRequest('POST', '/api/invitations', [
+            'recipient' => $userFinn['@id'],
+            'event' => $eventJson['@id'],
+        ], [], [$userJack['username']]);
+        $invitationJson = json_decode($response->getContent(), true);
+
+
+        // Finn want to post comment but invitation is not confirmed
+        $response = $this->authenticatedRequest('POST', '/api/comments', [
+            'content' => 'Non confirmed',
+            'rate' => 4,
+            'event' => $eventJson['@id'],
+        ], [], [$userFinn['username']]);
+
+        $this->assertEquals(400, $response->getStatusCode());
+
+
+        // Post comment but event is not past
+        // Confirm
+        $this->authenticatedRequest('PUT', '/api/invitations/'.$invitationJson['id'].'/confirm', [
+            'confirmed' => true,
+        ], [], [$userFinn['username']]);
+
+        [$futureStartAt, $futurEndAt] = $this->getEventDate(false);
+        $this->authenticatedRequest('PUT', $eventJson['@id'], [
+            "startAt" => $futureStartAt,
+            "endAt" => $futurEndAt,
+        ], [], [$userJack['username']]);
+
+        $response = $this->authenticatedRequest('POST', '/api/comments', [
+            'content' => 'Non finished',
+            'rate' => 4,
+            'event' => $eventJson['@id'],
+        ], [], [$userFinn['username']]);
+        $this->assertEquals(400, $response->getStatusCode());
+
+
+        // Event is finished but finn try to post twice
+        $this->authenticatedRequest('PUT', $eventJson['@id'], [
+            "startAt" => $startAt,
+            "endAt" => $endAt,
+        ], [], [$userJack['username']]);
+
+        // Comment is duplicated
+        $this->authenticatedRequest('POST', '/api/comments', [
+            'content' => 'Comment duplicated',
+            'rate' => 4,
+            'event' => $eventJson['@id'],
+        ], [], [$userFinn['username']]);
+
+        $response = $this->authenticatedRequest('POST', '/api/comments', [
+            'content' => 'Comment duplicated',
+            'rate' => 4,
+            'event' => $eventJson['@id'],
+        ], [], [$userFinn['username']]);
+
+        $this->assertEquals(400, $response->getStatusCode());
+
+        // Non invited user post comment
+        $response = $this->authenticatedRequest('POST', '/api/comments', [
+            'content' => 'Non invited',
+            'rate' => 4,
+            'event' => $eventJson['@id'],
+        ], [], ['jquinson']);
+
+        $this->assertEquals(400, $response->getStatusCode());
+
+    }
+
+    public function testPutComment(): void
+    {
+        $eventData = $this->getFirstEvent();
+
+        // Get last created comment
+        $response = $this->authenticatedRequest('GET', '/api/events/'.$eventData['id'].'/comments?order%5Bid%5D=desc', [], [], ['jquinson']);
+        $json = json_decode($response->getContent(), true);
+        $member = $json['hydra:member'][0];
+
+        $response = $this->authenticatedRequest(
+            'PUT',
+            $member['@id'],
+            [
+                'content' => 'Ouais en fait bof',
+                'rate' => 2,
+            ], [], ['jquinson']
+        );
+
+        $json = json_decode($response->getContent(), true);
+        $this->assertEquals(200, $response->getStatusCode());
+
+        // Test item's structure
+        foreach (['@id', 'author', 'content', 'rate', 'createdAt'] as $key) {
+            $this->assertArrayHasKey($key, $json);
+        }
+        $this->assertInternalType('string', $json['author']);
+        $this->assertEquals('Ouais en fait bof', $json['content']);
+        $this->assertEquals(2, $json['rate']);
+    }
+
+    public function testDeleteComment(): void
+    {
+        $eventData = $this->getFirstEvent();
+
+        // Get last created comment
+        $response = $this->authenticatedRequest('GET', '/api/events/'.$eventData['id'].'/comments?order%5Bid%5D=desc', [], [], ['jquinson']);
+        $json = json_decode($response->getContent(), true);
+        $member = $json['hydra:member'][0];
+
+        $response = $this->authenticatedRequest('DELETE', $member['@id'], [], [], ['jquinson']);
+
+        $this->assertEquals(204, $response->getStatusCode());
+    }
+
+
 
 
     protected function setUp()
