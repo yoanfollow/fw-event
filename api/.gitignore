@@ -6,7 +6,11 @@
 /public/bundles/
 /public/uploads/
 !/public/uploads/.gitkeep
-/var/
+/var/cache/*
+/var/logs/*
+/var/sessions/*
+!var/.gitkeep
+
 /vendor/
 /.env
 ###< symfony/framework-bundle ###
