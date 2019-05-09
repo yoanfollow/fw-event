@@ -6,31 +6,24 @@ services:
       context: ./api
     volumes:
       - ./api:/var/www/project/
-    depends_on:
-      - db
-    links:
-      - db
     user: ${CURRENT_UID}
     networks:
-      - common_network
+      - symfony
     environment:
       DATABASE_URL: mysql://noel:flantier@db:3306/follow
       DATABASE_TEST_URL: mysql://noel:flantier@db_test:3306/follow_test
       WAIT_HOSTS: db:3306
 
   nginx:
-    build:
-      context: ./docker/nginx
-    depends_on:
-      - api
-    links:
-      - api
+    image: nginx
+    restart: unless-stopped
     volumes:
       - ./api:/var/www/project/
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 8001:80
     networks:
-      - common_network
+      - symfony
 
   db:
     image: mysql:5.6
@@ -42,7 +35,7 @@ services:
     ports:
       - 3311:3306
     networks:
-      - common_network
+      - symfony
 
   # disable it if you don't use automatic tests (and if you like to kill kitten)
   db_test:
@@ -55,10 +48,8 @@ services:
     ports:
       - 3313:3306
     networks:
-      - common_network
+      - symfony
 
 networks:
-  common_network:
-    external:
-      name: common
+  symfony:
 

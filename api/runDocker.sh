@@ -31,4 +31,3 @@ php /var/www/project/bin/console doctrine:fixtures:load
 echo " ====== READY ====== "
 echo "Allons-y Alonso!"
 
-tail -f /var/www/project/var/log/dev.log

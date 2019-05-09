@@ -41,4 +41,4 @@ RUN chmod 777 -R /var/www/project/public/uploads
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
 RUN chmod +x /wait
 
-CMD /wait && /var/www/project/run.sh
+CMD /wait && /var/www/project/runDocker.sh && "php-fpm"
